@@ -1,49 +1,54 @@
-" Enable Pathogen
+" Enable Pathogen.
 execute pathogen#infect()
 
-" Use UTF-8 as encoding
+" Use UTF-8 as encoding.
 set encoding=utf-8
 set fileencoding=utf-8
 
-" Indent by two spaces please
+" Indent by two spaces please.
 set tabstop=2
 set shiftwidth=2
 set expandtab
 set smarttab
 
 " I cannot get ~/vimfiles/ftplugin working, so this is the second option:
+" Rust uses four-space indentation.
 au FileType rust set tabstop=4 shiftwidth=4
 
-" Enable auto-indent and smart indent
+" Enable auto-indent and smart indent.
 set ai
 set si
 
-" Highlight search results, do incremental search
+" Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
 set incsearch
 
-" Highlight matching brackets for 0.2 seconds
+" Highlight matching brackets for 0.2 seconds.
 set showmatch
 set mat=2
 
-" Detect filetypes
+" Detect filetypes.
 filetype plugin indent on
 
-" Enable the ruler
+" Enable the ruler.
 set ru
 
-" Enable syntax highlighting
+" Enable syntax highlighting.
 syntax enable
 
 if has("gui_running")
-  " Use Consolas in gVim
-  set guifont=Consolas:h12:cANSI
+  " Use Consolas at size 12.
+  if has("gui_win32")
+    set guifont=Consolas:h12:cANSI
+  elseif has("gui_gtk2")
+    set guifont=Consolas\ 12
+  endif
 
-  " Use Solarized Dark
+  " Use Solarized Dark.
   set background=dark
   colorscheme solarized
 
-  " Make the window wider
+  " Make the window wider.
   set columns=170
 
   " Backspace behaves odd in gVim. Fix that.
