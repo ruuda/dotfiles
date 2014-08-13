@@ -49,7 +49,7 @@ if has("gui_running")
   colorscheme solarized
 
   " Make the window wider.
-  set columns=170
+  set columns=160
 
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
