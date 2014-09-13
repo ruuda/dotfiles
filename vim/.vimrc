@@ -33,6 +33,9 @@ filetype plugin indent on
 " Enable the ruler.
 set ru
 
+" Disable folding of markdown files.
+let g:vim_markdown_folding_disabled=1
+
 " Enable syntax highlighting.
 syntax enable
 
