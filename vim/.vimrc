@@ -53,7 +53,7 @@ if has("gui_running")
 
   " Make the window wider and higher.
   set columns=110
-  set lines=55
+  set lines=31
 
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
