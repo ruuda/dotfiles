@@ -19,6 +19,9 @@ au FileType rust set tabstop=4 shiftwidth=4
 set ai
 set si
 
+" Highlight column 80
+set colorcolumn=80
+
 " Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
 set incsearch
