@@ -1,6 +1,9 @@
 " Enable Pathogen.
 execute pathogen#infect()
 
+" Generic
+" =======
+
 " Use UTF-8 as encoding.
 set encoding=utf-8
 set fileencoding=utf-8
@@ -10,10 +13,6 @@ set tabstop=2
 set shiftwidth=2
 set expandtab
 set smarttab
-
-" I cannot get ~/vimfiles/ftplugin working, so this is the second option:
-" Rust uses four-space indentation.
-au FileType rust set tabstop=4 shiftwidth=4
 
 " Enable auto-indent and smart indent.
 set ai
@@ -36,11 +35,24 @@ filetype plugin indent on
 " Enable the ruler.
 set ru
 
+" Enable syntax highlighting.
+syntax enable
+
+" Filetype specific
+" =================
+
+" I cannot get ~/vimfiles/ftplugin working, so this is the second option:
+" Rust uses four-space indentation.
+au FileType rust set tabstop=4 shiftwidth=4
+
+" Disable smart indent and cindent (brackets indent) for TeX files.
+au FileType tex set nosi nocindent
+
 " Disable folding of markdown files.
 let g:vim_markdown_folding_disabled=1
 
-" Enable syntax highlighting.
-syntax enable
+" Graphical options
+" =================
 
 if has("gui_running")
   " Use Consolas at size 12.
