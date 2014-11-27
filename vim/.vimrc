@@ -47,7 +47,11 @@ au FileType rust set tabstop=4 shiftwidth=4
 
 " Disable smart indent and cindent (brackets indent) for TeX files.
 au FileType tex set nosi nocindent
-au FileType tex set makeprg=latexmk\ \-xelatex\ %
+if has("win32") " The dash should not be escaped on Windows.
+  au FileType tex set makeprg=latexmk\  -xelatex\ %
+else
+  au FileType tex set makeprg=latexmk\ \-xelatex\ %
+endif
 
 " Disable folding of markdown files.
 let g:vim_markdown_folding_disabled=1
