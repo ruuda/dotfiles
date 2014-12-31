@@ -45,6 +45,9 @@ syntax enable
 " Rust uses four-space indentation.
 au FileType rust set tabstop=4 shiftwidth=4
 
+" Rust builds with Cargo
+au FileType rust set makeprg=cargo\ build
+
 " Disable smart indent and cindent (brackets indent) for TeX files.
 au FileType tex set nosi nocindent
 if has("win32") " The dash should not be escaped on Windows.
