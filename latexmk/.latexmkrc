@@ -1,1 +1,1 @@
-$clean_ext = "aux auxlock cb bbl log nav run.xml snm synctex.gz synctex.gz(busy) tex.blg"
+$clean_ext = "aux auxlock cb bbl blg log nav run.xml snm synctex.gz synctex.gz(busy)"
