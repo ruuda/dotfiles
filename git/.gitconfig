@@ -1,21 +1,21 @@
 [user]
-	name = Ruud van Asseldonk
-	email = dev@veniogames.com
+  name = Ruud van Asseldonk
+  email = dev@veniogames.com
   signingkey = 0599697D
 
 [alias]
-	hist = log --oneline --decorate=short
-	lg = log --oneline --decorate=short -10
-	st = status -s
-	pl = pull --ff-only
+  hist = log --oneline --decorate=short
+  lg = log --oneline --decorate=short -10
+  st = status -s
+  pl = pull --ff-only
 
 [gui]
-	fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
-	diffcontext = 4
-	encoding = utf-8
+  fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+  diffcontext = 4
+  encoding = utf-8
   
 [transfer]
-	fsckObjects = true
+  fsckObjects = true
 
 [diff]
   algorithm = patience
