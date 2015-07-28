@@ -18,8 +18,8 @@ set smarttab
 set ai
 set si
 
-" Highlight column 80
-set colorcolumn=80
+" Highlight the column after column 80.
+set colorcolumn=81
 
 " Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
