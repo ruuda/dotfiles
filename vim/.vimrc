@@ -56,6 +56,9 @@ else
   au FileType tex set makeprg=latexmk\ \-xelatex\ %
 endif
 
+" For Git commit messages, show the ruler after 72 characters, not 80.
+au FileType gitcommit set colorcolumn=73
+
 " Disable folding of markdown files.
 let g:vim_markdown_folding_disabled=1
 
