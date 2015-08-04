@@ -47,8 +47,12 @@ zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b%u%c %{$fg[yellow]%}%a%{$reset
 zstyle ':vcs_info:*' unstagedstr "%{$fg[red]%}*"
 zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}+"
 
+# Normally, the PS1 variable is evaluated only once, but because the vcs info
+# changes, we need to do it on every prompt.
+setopt prompt_subst
+
 # Start with a newline, then user@host in green, then three components of the
 # working directory, then a dollar in white. (There is no different charater for
 # a root prompt, as root does not use this .zshrc anyway.)
-PROMPT="
-%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_} %{$fg[white]%}$%{$reset_color%} "
+PS1='
+%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_} %{$fg[white]%}$%{$reset_color%} '
