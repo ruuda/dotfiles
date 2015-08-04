@@ -52,7 +52,8 @@ zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}+"
 setopt prompt_subst
 
 # Start with a newline, then user@host in green, then three components of the
-# working directory, then a dollar in white. (There is no different charater for
-# a root prompt, as root does not use this .zshrc anyway.)
+# working directory, then source control (vcs) info, then a dollar in white.
+# (There is no different charater for a root prompt, as root does not use this
+# .zshrc anyway.)
 PS1='
 %{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_} %{$fg[white]%}$%{$reset_color%} '
