@@ -36,10 +36,16 @@ colors
 # Retrieve source control status before printing the prompt.
 precmd() { vcs_info }
 
-# Format source control info as the branch in red, optionally with an action in
-# yellow.
-zstyle ':vcs_info:*'       formats "%{$fg[red]%}%b%{$reset_color%}"
-zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b %{$fg[yellow]%}%a%{$reset_color%}"
+# Enable info for Git and Subversion. Do detect changes in the working
+# directory. Format source control info as the branch in red, optionally with an
+# action in yellow. Staged and unstaged changes will show as a red star and
+# green plus.
+zstyle ':vcs_info:*' enable git svn
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' formats "%{$fg[red]%}%b%u%c%{$reset_color%}"
+zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b%u%c %{$fg[yellow]%}%a%{$reset_color%}"
+zstyle ':vcs_info:*' unstagedstr "%{$fg[red]%}*"
+zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}+"
 
 # Start with a newline, then user@host in green, then three components of the
 # working directory, then a dollar in white. (There is no different charater for
