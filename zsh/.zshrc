@@ -27,12 +27,22 @@ alias -s h=gvim
 alias -s md=gvim
 alias -s rs=gvim
 
-# Customise the prompt, first load colours to do so.
-autoload -U colors
+# Customise the prompt, first load the plugins to set the colour and get the Git
+# status.
+autoload -Uz colors
+autoload -Uz vcs_info
 colors
+
+# Retrieve source control status before printing the prompt.
+precmd() { vcs_info }
+
+# Format source control info as the branch in red, optionally with an action in
+# yellow.
+zstyle ':vcs_info:*'       formats "%{$fg[red]%}%b%{$reset_color%}"
+zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b %{$fg[yellow]%}%a%{$reset_color%}"
 
 # Start with a newline, then user@host in green, then three components of the
 # working directory, then a dollar in white. (There is no different charater for
 # a root prompt, as root does not use this .zshrc anyway.)
 PROMPT="
-%{$fg[green]%}%n@%m%{$reset_color%} %3~ %{$fg[white]%}$%{$reset_color%} "
+%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_} %{$fg[white]%}$%{$reset_color%} "
