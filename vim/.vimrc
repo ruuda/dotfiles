@@ -35,6 +35,10 @@ filetype plugin indent on
 " Enable the ruler.
 set ru
 
+" Use Solarized Dark.
+set background=dark
+colorscheme solarized
+
 " Enable syntax highlighting.
 syntax enable
 
@@ -72,10 +76,6 @@ if has("gui_running")
   elseif has("gui_gtk2")
     set guifont=Consolas\ 12
   endif
-
-  " Use Solarized Dark.
-  set background=dark
-  colorscheme solarized
 
   " Make the window wider and higher.
   set columns=110
