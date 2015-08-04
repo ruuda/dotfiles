@@ -83,4 +83,8 @@ if has("gui_running")
 
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
+
+  " Remove the menu bar and toolbar.
+  set guioptions-=m
+  set guioptions-=T
 endif
