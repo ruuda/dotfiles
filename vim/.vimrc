@@ -35,9 +35,12 @@ filetype plugin indent on
 " Enable the ruler.
 set ru
 
-" Use Solarized Dark.
-set background=dark
-colorscheme solarized
+" Use Solarized Dark. (But not in a Windows terminal that does not support 256
+" colours.)
+if &term != 'win32'
+  set background=dark
+  colorscheme solarized
+endif
 
 " Enable syntax highlighting.
 syntax enable
