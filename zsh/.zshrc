@@ -42,8 +42,8 @@ precmd() { vcs_info }
 # green plus.
 zstyle ':vcs_info:*' enable git svn
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' formats "%{$fg[red]%}%b%u%c%{$reset_color%}"
-zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b%u%c %{$fg[yellow]%}%a%{$reset_color%}"
+zstyle ':vcs_info:*' formats "%{$fg[red]%}%b%u%c%{$reset_color%} "
+zstyle ':vcs_info:*' actionformats "%{$fg[red]%}%b%u%c %{$fg[yellow]%}%a%{$reset_color%} "
 zstyle ':vcs_info:*' unstagedstr "%{$fg[red]%}*"
 zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}+"
 
@@ -56,4 +56,4 @@ setopt prompt_subst
 # (There is no different charater for a root prompt, as root does not use this
 # .zshrc anyway.)
 PS1='
-%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_} %{$fg[white]%}$%{$reset_color%} '
+%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_}%{$fg[white]%}$%{$reset_color%} '
