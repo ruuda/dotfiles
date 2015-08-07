@@ -9,6 +9,13 @@ setopt autocd
 # Use Emacs-style controls (even though I use Vim).
 bindkey -e
 
+# Make all keys work in GNOME terminal. To generate the ~/.zkbd/$TERM file, run
+# `autoload zkbd` and `zkbd`.
+source ~/.zkbd/$TERM
+[[ -n ${key[Home]}   ]] && bindkey "${key[Home]}"   beginning-of-line
+[[ -n ${key[End]}    ]] && bindkey "${key[End]}"    end-of-line
+[[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}" delete-char
+
 # Enable completion.
 autoload -Uz compinit
 compinit
