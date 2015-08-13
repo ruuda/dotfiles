@@ -7,7 +7,7 @@
   hist = log --oneline --decorate=short
   lg = log --oneline --decorate=short -10
   st = status -s
-  pl = pull --ff-only
+  pl = pull --ff-only --no-rebase
 
 [gui]
   fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
