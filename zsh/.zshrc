@@ -16,6 +16,20 @@ source ~/.zkbd/$TERM
 [[ -n ${key[End]}    ]] && bindkey "${key[End]}"    end-of-line
 [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}" delete-char
 
+# Make Ctrl + Z discard the current input, and bring it up again after the next
+# command has finished. Ctrl-Z on empty input will still background the process.
+ctrl-z-stash() {
+  emulate -LR zsh
+  if [[ $#BUFFER -eq 0 ]]; then
+    bg
+    zle redisplay
+  else
+    zle push-input
+  fi
+}
+zle -N ctrl-z-stash
+bindkey "^Z" ctrl-z-stash
+
 # Enable completion.
 autoload -Uz compinit
 compinit
