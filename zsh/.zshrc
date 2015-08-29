@@ -30,6 +30,10 @@ ctrl-z-stash() {
 zle -N ctrl-z-stash
 bindkey "^Z" ctrl-z-stash
 
+# Do not put duplicate entries in the history. What is the point of pressing the
+# up arrow thirty times and nothing happens?
+setopt hist_ignore_dups
+
 # Enable completion.
 autoload -Uz compinit
 compinit
