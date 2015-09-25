@@ -55,7 +55,8 @@ au FileType rust set tabstop=4 shiftwidth=4
 " Rust builds with Cargo
 au FileType rust set makeprg=cargo\ build
 
-" Disable smart indent and cindent (brackets indent) for TeX files.
+" Disable smart indent and cindent (brackets indent) for TeX files. Build TeX
+" with latexmk.
 au FileType tex set nosi nocindent
 if has("win32") " The dash should not be escaped on Windows.
   au FileType tex set makeprg=latexmk\  -xelatex\ %
