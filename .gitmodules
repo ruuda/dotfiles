@@ -10,3 +10,6 @@
 [submodule "vim/.vim/bundle/rust.vim"]
 	path = vim/.vim/bundle/rust.vim
 	url = https://github.com/rust-lang/rust.vim.git
+[submodule "vim/.vim/bundle/vim-surround"]
+	path = vim/.vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround.git
