@@ -49,6 +49,10 @@ syntax enable
 let g:ctrlp_user_command =
   \ ['.git', 'cd %s && git ls-files . -co --exclude-standard']
 
+" Open CtrlP with Leader + F in addition to Ctrl + P. It is much more
+" ergonomic.
+noremap <Leader>f :CtrlP<Return>
+
 " Filetype specific
 " =================
 
