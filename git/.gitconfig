@@ -20,5 +20,8 @@
 [diff]
   algorithm = patience
 
+[merge]
+  conflictstyle = diff3
+
 [rerere]
   enabled = true
