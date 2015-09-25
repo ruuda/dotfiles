@@ -45,6 +45,10 @@ endif
 " Enable syntax highlighting.
 syntax enable
 
+" For CtrlP, suggest files from a Git repository.
+let g:ctrlp_user_command =
+  \ ['.git', 'cd %s && git ls-files . -co --exclude-standard']
+
 " Filetype specific
 " =================
 
