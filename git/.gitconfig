@@ -22,6 +22,7 @@
 
 [merge]
   conflictstyle = diff3
+  tool = gvimdiff
 
 [rerere]
   enabled = true
