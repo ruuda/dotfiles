@@ -29,7 +29,8 @@ set incsearch
 set showmatch
 set mat=2
 
-" Detect filetypes.
+" Enable filetype detection, and load filetype-specific plugins and
+" indentation.
 filetype plugin indent on
 
 " Enable the ruler.
