@@ -33,6 +33,9 @@ set mat=2
 " indentation.
 filetype plugin indent on
 
+" Enable visual autocomplete of commands.
+set wildmenu
+
 " Enable the ruler.
 set ru
 
