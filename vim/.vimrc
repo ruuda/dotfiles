@@ -39,6 +39,9 @@ set wildmenu
 " Enable the ruler.
 set ru
 
+" Automatically reload files if they changed outside of Vim, do not ask.
+set autoread
+
 " Use Solarized Dark. (But not in a Windows terminal that does not support 256
 " colours.)
 if &term != 'win32'
