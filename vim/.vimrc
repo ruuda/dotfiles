@@ -49,12 +49,19 @@ endif
 " Enable syntax highlighting.
 syntax enable
 
-" For CtrlP, suggest files from a Git repository.
+" For CtrlP, suggest files from a Git repository. First list all tracked files
+" (ls-files), then list all untracked files that are not ignored (second
+" invocation of ls-files). Git can list them in one command, but listing
+" untracked files is noticeably slower and introduces a delay. By listing these
+" files last, CtrlP can start scanning through the tracked files immediately,
+" which are also accessed most often.
 let g:ctrlp_user_command =
-  \ ['.git', 'cd %s && git ls-files . -co --exclude-standard']
+  \ ['.git', 'cd %s && git ls-files && git ls-files --other --exclude-standard']
 
-" Open CtrlP with Leader + F in addition to Ctrl + P. It is much more
-" ergonomic.
+" With caching enabled, new untracked files will not show up, so disable it.
+let g:ctrlp_use_caching = 0
+
+" Open CtrlP with Leader + F in addition to Ctrl + P. It is much more ergonomic.
 noremap <Leader>f :CtrlP<Return>
 
 " Filetype specific
