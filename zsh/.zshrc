@@ -46,6 +46,9 @@ export EDITOR=vim
 # Colour ls output by default.
 alias ls='ls --color=auto'
 
+# Allow exit the Vim way.
+alias :q='exit'
+
 # Set suffix aliases to open certain files with an editor by default.
 alias -s cpp=gvim
 alias -s h=gvim
