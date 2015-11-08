@@ -4,8 +4,10 @@
   signingkey = 0599697D
 
 [alias]
-  hist = log --oneline --decorate=short
-  lg = log --oneline --decorate=short -10
+  # The format string is the same as --decorate=short, but with the branch/tag
+  # markers after the commit message instead of in front of it.
+  hist = log   --oneline --format='%C(auto)%h %s%d'
+  lg = log -10 --oneline --format='%C(auto)%h %s%d'
   st = status -s
   pl = pull --ff-only --no-rebase
 
