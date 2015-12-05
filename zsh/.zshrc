@@ -49,6 +49,11 @@ alias ls='ls --color=auto'
 # Allow exit the Vim way.
 alias :q='exit'
 
+# Aliases to cd up multiple directories.
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
 # Set suffix aliases to open certain files with an editor by default.
 alias -s cpp=gvim
 alias -s h=gvim
