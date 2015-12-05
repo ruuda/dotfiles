@@ -16,6 +16,9 @@
   diffcontext = 4
   encoding = utf-8
   
+[push]
+  default = simple
+
 [transfer]
   fsckObjects = true
 
