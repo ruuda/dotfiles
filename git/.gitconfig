@@ -11,6 +11,10 @@
   st = status -s
   pl = pull --ff-only --no-rebase
 
+  # When run after a pull, shows all new commits from old to new. Optionally
+  # takes the branch name.
+  whatsnew = !git hist --reverse $1@{1}..$1@{0}
+
 [gui]
   fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
   diffcontext = 4
