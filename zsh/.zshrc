@@ -3,6 +3,17 @@ HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
 
+# Do not put duplicate entries in the history. What is the point of pressing the
+# up arrow thirty times and nothing happens?
+setopt hist_ignore_dups
+
+# Do not record a command in the history if it is prefixed by a space.
+setopt hist_ignore_space
+
+# Write history immediately instead of at exit. This ensures that history is not
+# lost even when the shell is not properly terminated.
+setopt inc_append_history
+
 # Change dir automatically without the cd command.
 setopt autocd
 
@@ -29,10 +40,6 @@ ctrl-z-stash() {
 }
 zle -N ctrl-z-stash
 bindkey "^Z" ctrl-z-stash
-
-# Do not put duplicate entries in the history. What is the point of pressing the
-# up arrow thirty times and nothing happens?
-setopt hist_ignore_dups
 
 # Enable completion.
 autoload -Uz compinit
