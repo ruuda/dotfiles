@@ -34,4 +34,10 @@
   tool = gvimdiff
 
 [rerere]
+  # Remember conflict resolutions. If the same conflict appears again,
+  # use the previous resolution.
   enabled = true
+
+  # If rerere successfully resolved a conflict, stage the conflicted
+  # file automatically.
+  autoupdate = true
