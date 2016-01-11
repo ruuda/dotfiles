@@ -41,6 +41,12 @@ ctrl-z-stash() {
 zle -N ctrl-z-stash
 bindkey "^Z" ctrl-z-stash
 
+# Use Vim-inspired navigation key bindings in Emacs mode. This helps navigating
+# those really long commands when you need to fix the typo right in the middle.
+bindkey "^E" vi-forward-blank-word-end
+bindkey "^W" vi-forward-blank-word
+bindkey "^B" backward-word
+
 # Enable completion.
 autoload -Uz compinit
 compinit
