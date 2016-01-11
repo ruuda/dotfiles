@@ -11,8 +11,8 @@
   st = status -s
   pl = pull --ff-only --no-rebase
 
-  # When run after a pull, shows all new commits from old to new. Optionally
-  # takes the branch name.
+  # When used after a pull, shows all new commits from old to new.
+  # Optionally takes the branch name.
   whatsnew = !git hist --reverse $1@{1}..$1@{0}
 
 [gui]
@@ -21,15 +21,20 @@
   encoding = utf-8
   
 [push]
+  # Push only the current branch.
   default = simple
 
 [transfer]
+  # Verify new objects to catch errors early. This is to prevent bad objects
+  # from spreading further.
   fsckObjects = true
 
 [diff]
+  # Try harder to produce a clean diff, even if that takes a bit longer.
   algorithm = patience
 
 [merge]
+  # Show the common ancestor for merge conflicts.
   conflictstyle = diff3
   tool = gvimdiff
 
