@@ -50,9 +50,10 @@ export CC=clang
 export CXX=clang++
 export EDITOR=vim
 
-# Colour grep and ls output by default.
-alias grep='grep --color=auto'
+# Colour ls and grep output by default.
 alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
 
 # Allow exit the Vim way.
 alias :q='exit'
