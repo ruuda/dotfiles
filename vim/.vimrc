@@ -18,8 +18,8 @@ set smarttab
 set ai
 set si
 
-" Highlight the column after column 80.
-set colorcolumn=81
+" Highlight the column after the text width.
+set colorcolumn=+1
 
 " Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
@@ -85,9 +85,6 @@ if has("win32") " The dash should not be escaped on Windows.
 else
   au FileType tex set makeprg=latexmk\ \-xelatex\ %
 endif
-
-" For Git commit messages, show the ruler after 72 characters, not 80.
-au FileType gitcommit set colorcolumn=73
 
 " Disable folding of markdown files.
 let g:vim_markdown_folding_disabled=1
