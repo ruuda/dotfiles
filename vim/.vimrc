@@ -104,6 +104,10 @@ if has("gui_running")
   set columns=110
   set lines=31
 
+  " Code needs room to breathe, especially if the convention is to ues
+  " Egyptian brackets. Add more space between the lines.
+  set linespace=4
+
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
 
