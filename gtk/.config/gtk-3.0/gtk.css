@@ -1,0 +1,36 @@
+/* Get rid of unsightly line in ssd title bar and reduce button padding. */
+
+.ssd .titlebar {
+    border: none;
+    background-image: linear-gradient(to bottom,
+                                      shade(@theme_bg_color, 1.042),
+                                      shade(@theme_bg_color, 0.999));
+    box-shadow: none;
+    border-top: 1px solid shade(@theme_bg_color, 1.072);
+}
+
+.ssd .titlebar:backdrop {
+    background-image: linear-gradient(to bottom, @theme_bg_color);
+}
+
+.ssd .titlebar .button.titlebutton {
+    padding: 3px;
+}
+
+.menubar {
+    background-image: linear-gradient(to bottom,
+                                      shade(@theme_bg_color, 0.999),
+                                      shade(@theme_bg_color, 0.985));
+    border-bottom: 1px solid shade(@theme_bg_color, 0.679);
+}
+
+.menubar:backdrop {
+    background-image: linear-gradient(to bottom, @theme_bg_color);
+}
+
+/* Add a bit of padding to the terminal. */
+
+VteTerminal, TerminalScreen {
+    padding: 10px 10px 10px 10px;
+    -VteTerminal-inner-border: 10px 10px 10px 10px;
+}
