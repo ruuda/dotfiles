@@ -57,7 +57,8 @@ export CXX=clang++
 export EDITOR=vim
 
 # Colour ls and grep output by default.
-alias ls='ls --color=auto'
+# Also prevent ls from quoting names with spaces.
+alias ls='ls --color=auto --quoting-style=literal'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
