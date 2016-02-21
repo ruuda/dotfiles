@@ -52,9 +52,10 @@ autoload -Uz compinit
 compinit
 
 # Set preferred tools.
-export CC=clang
-export CXX=clang++
-export EDITOR=vim
+export CC='clang'
+export CPP='clang -E'
+export CXX='clang++'
+export EDITOR='vim'
 
 # Colour ls and grep output by default.
 # Also prevent ls from quoting names with spaces.
