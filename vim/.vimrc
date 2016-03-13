@@ -77,6 +77,9 @@ au FileType rust set tabstop=4 shiftwidth=4
 " Rust builds with Cargo
 au FileType rust set makeprg=cargo\ build
 
+" I prefer 80-column files over the default 100.
+au FileType rust set textwidth=80
+
 " Disable smart indent and cindent (brackets indent) for TeX files. Setting
 " indentexpr to empty ensures that Vim does not mess up things after typing a
 " curly bracket. Build TeX with latexmk.
