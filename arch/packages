@@ -5,7 +5,6 @@ afl
 autoconf
 automake
 baobab
-bash
 bind-tools
 blender
 boost
@@ -14,7 +13,6 @@ cabal-install
 chromium
 clang
 cmake
-coreutils
 cryptsetup
 darktable
 dconf-editor
@@ -26,9 +24,7 @@ epiphany
 evince
 extra-cmake-modules
 fakeroot
-file
 file-roller
-findutils
 firefox
 fontforge
 gcc
@@ -42,14 +38,12 @@ gnome-backgrounds
 gnome-calculator
 gnome-characters
 gnome-control-center
-gnome-desktop
 gnome-devel-docs
 gnome-disk-utility
 gnome-font-viewer
 gnome-keyring
 gnome-logs
 gnome-screenshot
-gnome-shell
 gnome-shell-extensions
 gnome-system-log
 gnome-system-monitor
@@ -57,7 +51,6 @@ gnome-terminal
 gnome-tweak-tool
 gnome-user-docs
 gnome-weather
-grep
 grub
 gst-libav
 gst-plugins-ugly
@@ -128,9 +121,7 @@ stow
 subversion
 sudo
 systemd-sysvcompat
-tar
 texlive-bibtexextra
-texlive-core
 texlive-fontsextra
 texlive-formatsextra
 texlive-genericextra
