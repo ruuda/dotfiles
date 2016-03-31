@@ -71,6 +71,11 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+# The Gnome keyring does not support ed25519 keys,
+# and it is annoying to have to unlock the key every time.
+# Add an alias to start ssh-agent and load the key.
+alias loadkey='eval $(ssh-agent) && ssh-add'
+
 # Set suffix aliases to open certain files with an editor by default.
 alias -s cpp=gvim
 alias -s h=gvim
