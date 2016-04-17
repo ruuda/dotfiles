@@ -1,9 +1,9 @@
-/* Add a bit of padding to title bars. */
+/* Add a bit of padding to title bars, but not to the integrated
+ * title/menu bars. */
 
-headerbar {
+headerbar.default-decoration {
     padding: 3px;
 }
-
 
 /* Add a bit of padding to the terminal. */
 
