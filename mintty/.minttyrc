@@ -11,7 +11,7 @@ SwitchShortcuts=no
 AltFnShortcuts=no
 CopyAsRTF=no
 
-# Solaized colours adapted from https://github.com/mavnn/mintty-colors-solarized.
+# Solarized colours adapted from https://github.com/mavnn/mintty-colors-solarized.
 
 ForegroundColour=131, 148, 150
 BackgroundColour=  0,  43,  54
