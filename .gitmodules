@@ -1,18 +1,18 @@
 [submodule "vim/.vim/bundle/vim-colors-solarized"]
 	path = vim/.vim/bundle/vim-colors-solarized
-	url = https://github.com/altercation/vim-colors-solarized.git
+	url = https://github.com/altercation/vim-colors-solarized
 [submodule "vim/.vim/bundle/vim-markdown"]
 	path = vim/.vim/bundle/vim-markdown
-	url = https://github.com/plasticboy/vim-markdown.git
+	url = https://github.com/plasticboy/vim-markdown
 [submodule "vim/.vim/bundle/ctrlp.vim"]
 	path = vim/.vim/bundle/ctrlp.vim
-	url = https://github.com/ctrlpvim/ctrlp.vim.git
+	url = https://github.com/ctrlpvim/ctrlp.vim
 [submodule "vim/.vim/bundle/rust.vim"]
 	path = vim/.vim/bundle/rust.vim
-	url = https://github.com/rust-lang/rust.vim.git
+	url = https://github.com/rust-lang/rust.vim
 [submodule "vim/.vim/bundle/vim-surround"]
 	path = vim/.vim/bundle/vim-surround
-	url = https://github.com/tpope/vim-surround.git
+	url = https://github.com/tpope/vim-surround
 [submodule "vim/.vim/bundle/vim-scala"]
 	path = vim/.vim/bundle/vim-scala
 	url = https://github.com/derekwyatt/vim-scala
