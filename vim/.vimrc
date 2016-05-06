@@ -67,6 +67,10 @@ let g:ctrlp_use_caching = 0
 " Open CtrlP with Leader + F in addition to Ctrl + P. It is much more ergonomic.
 noremap <Leader>f :CtrlP<Return>
 
+" Enable Hardtime, make pressing hjkl less effective to forcy myself to use
+" better navigation alternatives.
+let g:hardtime_default_on = 1
+
 " Filetype specific
 " =================
 
