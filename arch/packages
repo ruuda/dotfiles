@@ -2,6 +2,7 @@ adobe-source-code-pro-fonts
 adobe-source-sans-pro-fonts
 adobe-source-serif-pro-fonts
 afl
+agda
 autoconf
 automake
 baobab
@@ -19,6 +20,7 @@ dconf-editor
 devhelp
 dhcpcd
 ed
+emacs
 eog
 epiphany
 evince
@@ -61,6 +63,7 @@ gvim
 htop
 inetutils
 inkscape
+intel-ucode
 iputils
 libgnome
 libraw
@@ -98,8 +101,11 @@ picard
 pkg-config
 pngcrush
 polari
+powertop
+pv
 pwgen
 python-fonttools
+python-scipy
 python-sympy
 python2-fonttools
 python2-sympy
@@ -107,8 +113,11 @@ python2-virtualenv
 quodlibet
 r
 rsync
+sbt
+scala
 seahorse
 shntool
+sshfs
 stack
 stow
 subversion
@@ -124,6 +133,7 @@ thunderbird
 tk
 totem
 transmission-gtk
+tree
 ttf-bitstream-vera
 ttf-freefont
 ttf-gentium
@@ -131,6 +141,7 @@ ttf-inconsolata
 ttf-linux-libertine
 ttf-oxygen
 usbutils
+valgrind
 vi
 wget
 which
