@@ -46,6 +46,7 @@ gnome-font-viewer
 gnome-keyring
 gnome-logs
 gnome-screenshot
+gnome-shell
 gnome-shell-extensions
 gnome-system-log
 gnome-system-monitor
@@ -54,6 +55,7 @@ gnome-tweak-tool
 gnome-user-docs
 gnome-weather
 grub
+grep
 gst-libav
 gthumb
 gtk-doc
@@ -108,6 +110,7 @@ python-fonttools
 python-scipy
 python-sympy
 python2-fonttools
+python2-pip
 python2-sympy
 python2-virtualenv
 quodlibet
@@ -124,6 +127,7 @@ subversion
 sudo
 systemd-sysvcompat
 texlive-bibtexextra
+texlive-core
 texlive-fontsextra
 texlive-formatsextra
 texlive-genericextra
@@ -150,4 +154,5 @@ xdg-user-dirs
 xf86-input-libinput
 xf86-input-wacom
 xf86-video-intel
+yelp
 zsh
