@@ -28,6 +28,12 @@ def get_explicit_native_packages():
 def get_explicit_native_root_packages():
     return get_from_pacman('-Qnettq')
 
+def print_list(packages, message):
+    if len(packages) > 0:
+        print(message)
+        for pkg in sorted(packages):
+            print('  ' + pkg)
+
 def main():
     explicit_native_desired = get_from_file('packages')
     explicit_native_root = get_explicit_native_root_packages()
@@ -49,24 +55,16 @@ def main():
     unexpected_deps = unexpected_pkgs.difference(explicit_native_root)
     unexpected_new = unexpected_pkgs.difference(unexpected_deps)
 
-    if len(missing_pkgs) > 0:
-        print('The following desired native packages are not installed:\n')
-        for pkg in sorted(missing_pkgs):
-            print(pkg)
+    print_list(missing_pkgs,
+        '\nThe following desired native packages are not installed:\n')
 
-    if len(non_explicit_pkgs) > 0:
-        print('\nThe following desired native packages are installed, but not explicitly:\n')
-        for pkg in sorted(non_explicit_pkgs):
-            print(pkg)
+    print_list(non_explicit_pkgs,
+        '\nThe following desired native packages are installed, but not explicitly:\n')
 
-    if len(unexpected_deps) > 0:
-        print('\nThe following native packages should be reinstalled with --asdeps:\n')
-        for pkg in sorted(unexpected_deps):
-            print(pkg)
+    print_list(unexpected_deps,
+        '\nThe following native packages should be reinstalled with --asdeps:\n')
 
-    if len(unexpected_new) > 0:
-        print('\nThe following native packages might be uninstalled or added to the list:\n')
-        for pkg in sorted(unexpected_new):
-            print(pkg)
+    print_list(unexpected_new,
+        '\nThe following native packages might be uninstalled or added to the list:\n')
 
 main()
