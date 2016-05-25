@@ -124,6 +124,7 @@ stack
 stow
 subversion
 sudo
+terminus-font
 texlive-bibtexextra
 texlive-core
 texlive-fontsextra
@@ -131,6 +132,7 @@ texlive-formatsextra
 texlive-genericextra
 texlive-latexextra
 texlive-pictures
+texlive-science
 thunderbird
 tk
 totem
