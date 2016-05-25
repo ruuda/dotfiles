@@ -21,6 +21,10 @@ set si
 " Highlight the column after the text width.
 set colorcolumn=+1
 
+" Show relative line numbers.
+set number
+set relativenumber
+
 " Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
 set incsearch
