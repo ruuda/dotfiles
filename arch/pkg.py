@@ -19,6 +19,9 @@ def get_from_file(fname):
     with open(fname) as f:
         return [pkg.strip() for pkg in f if len(pkg) > 0]
 
+def get_native_packages():
+    return get_from_pacman('-Qnq')
+
 def get_explicit_native_packages():
     return get_from_pacman('-Qneq')
 
@@ -29,11 +32,17 @@ def main():
     explicit_native_desired = get_from_file('packages')
     explicit_native_root = get_explicit_native_root_packages()
     explicit_native = get_explicit_native_packages()
+    all_native = get_native_packages()
 
     # Find packages which are not installed explicitly, but which should be
     # according to the list, and vice versa.
-    missing_pkgs = set(explicit_native_desired).difference(explicit_native)
+    missing_explicit_pkgs = set(explicit_native_desired).difference(explicit_native)
     unexpected_pkgs = set(explicit_native).difference(explicit_native_desired)
+
+    # Missing explicit packages can be installed but not explicitly, or not
+    # installed at all.
+    missing_pkgs = missing_explicit_pkgs.difference(all_native)
+    non_explicit_pkgs = missing_explicit_pkgs.difference(missing_pkgs)
 
     # Unexpected packages can either be explicit while they should be a
     # dependency, or they can be totally new.
@@ -41,8 +50,13 @@ def main():
     unexpected_new = unexpected_pkgs.difference(unexpected_deps)
 
     if len(missing_pkgs) > 0:
-        print('The following desired native packages are not installed explicitly:\n')
+        print('The following desired native packages are not installed:\n')
         for pkg in sorted(missing_pkgs):
+            print(pkg)
+
+    if len(non_explicit_pkgs) > 0:
+        print('\nThe following desired native packages are installed, but not explicitly:\n')
+        for pkg in sorted(non_explicit_pkgs):
             print(pkg)
 
     if len(unexpected_deps) > 0:
