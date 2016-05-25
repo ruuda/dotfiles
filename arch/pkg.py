@@ -40,16 +40,19 @@ def main():
     unexpected_deps = unexpected_pkgs.difference(explicit_native_root)
     unexpected_new = unexpected_pkgs.difference(unexpected_deps)
 
-    print('The following desired native packages are not installed explicitly:\n')
-    for pkg in sorted(missing_pkgs):
-        print(pkg)
+    if len(missing_pkgs) > 0:
+        print('The following desired native packages are not installed explicitly:\n')
+        for pkg in sorted(missing_pkgs):
+            print(pkg)
 
-    print('\nThe following native packages should be reinstalled with --as-deps:\n')
-    for pkg in sorted(unexpected_deps):
-        print(pkg)
+    if len(unexpected_deps) > 0:
+        print('\nThe following native packages should be reinstalled with --asdeps:\n')
+        for pkg in sorted(unexpected_deps):
+            print(pkg)
 
-    print('\nThe following native packages might be uninstalled or added to the list:\n')
-    for pkg in sorted(unexpected_new):
-        print(pkg)
+    if len(unexpected_new) > 0:
+        print('\nThe following native packages might be uninstalled or added to the list:\n')
+        for pkg in sorted(unexpected_new):
+            print(pkg)
 
 main()
