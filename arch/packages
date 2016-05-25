@@ -83,7 +83,6 @@ man-pages
 meld
 mercurial
 mono
-mousetweaks
 nano
 nautilus
 netctl
@@ -125,7 +124,6 @@ stack
 stow
 subversion
 sudo
-systemd-sysvcompat
 texlive-bibtexextra
 texlive-core
 texlive-fontsextra
