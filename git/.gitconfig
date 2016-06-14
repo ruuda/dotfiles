@@ -33,6 +33,10 @@
   # Try harder to produce a clean diff, even if that takes a bit longer.
   algorithm = patience
 
+  # Try to break up diffs at blank lines, so you don't get those brackets
+  # floating away.
+  compactionHeuristic = true
+
 [merge]
   # Show the common ancestor for merge conflicts.
   conflictstyle = diff3
