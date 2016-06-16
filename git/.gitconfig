@@ -42,6 +42,11 @@
   conflictstyle = diff3
   tool = gvimdiff
 
+[rebase]
+  # When doing an interactive rebase, automatically reorder and set the right
+  # actions for commits that were committed with --fixup or --squash.
+  autosquash = true
+
 [rerere]
   # Remember conflict resolutions. If the same conflict appears again,
   # use the previous resolution.
