@@ -30,8 +30,9 @@
   fsckObjects = true
 
 [diff]
-  # Try harder to produce a clean diff, even if that takes a bit longer.
-  # The "histogram" algorithm is an extension of the "patience" algorithm.
+  # Try harder to produce a clean diff. The histogram algorithm is an extension
+  # of the patience algorithm that happens to be faster than patience and faster
+  # than the default diff algorithm too. (Source: commit 8555123 of Git.)
   algorithm = histogram
 
   # Try to break up diffs at blank lines, so you don't get those brackets
