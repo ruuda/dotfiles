@@ -31,7 +31,8 @@
 
 [diff]
   # Try harder to produce a clean diff, even if that takes a bit longer.
-  algorithm = patience
+  # The "histogram" algorithm is an extension of the "patience" algorithm.
+  algorithm = histogram
 
   # Try to break up diffs at blank lines, so you don't get those brackets
   # floating away.
