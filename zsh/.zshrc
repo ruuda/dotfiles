@@ -63,6 +63,9 @@ alias ls='ls --color=auto --quoting-style=literal'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
+# Use Git's diff functionality instead of GNU Diff. Git's is far superior.
+alias diff='git diff --no-index'
+
 # Allow exit the Vim way.
 alias :q='exit'
 
