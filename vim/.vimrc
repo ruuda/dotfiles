@@ -46,6 +46,19 @@ set ru
 " Automatically reload files if they changed outside of Vim, do not ask.
 set autoread
 
+" It's not the 80s any more, why should I have to save my file all the time? I
+" use source control, those are the states of the files I care about. In
+" between commits, there should be no distinction between a file on disk or a
+" file in memory. Some interesting background reading:
+"
+"   https://ngnghm.github.io/blog/2015/08/03/chapter-2-save-our-souls
+"   http://tunes.org/wiki/orthogonal_20persistence.html
+"
+" Write when changing buffer, doing a make, quitting, Vim, etc.
+" There is also the 'autosave' option, which is documented, but not yet
+" implemented in Vim 7.4.
+set autowriteall
+
 " Use Solarized Dark. (But not in a Windows terminal that does not support 256
 " colours.)
 if &term != 'win32'
