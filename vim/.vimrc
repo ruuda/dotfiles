@@ -131,7 +131,7 @@ if has("gui_running")
 
   " Code needs room to breathe, especially if the convention is
   " to use Egyptian brackets. Add more space between the lines.
-  set linespace=4
+  set linespace=7
 
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
