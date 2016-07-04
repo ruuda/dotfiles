@@ -74,10 +74,36 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
-# The Gnome keyring does not support ed25519 keys,
-# and it is annoying to have to unlock the key every time.
-# Add an alias to start ssh-agent and load the key.
-alias loadkey='eval $(ssh-agent) && ssh-add'
+# The Gnome keyring does not support ed25519 keys, and it is annoying to have to
+# unlock the key every time. Therefore start an ssh-agent that is shared among
+# all shells, but do not load a key immediately. A manual ssh-add is still
+# required, but after that the key will remain loaded and accessible to new
+# shells.
+
+# Store information about the running SSH agent in ~/.ssh/environment.
+SSH_ENV=$HOME/.ssh/environment
+
+# To start an ssh agent, run the program, which prints shell script that sets
+# the right environment variables. It also echoes the PID, suppress that by
+# commenting it with sed. Then make the file executable and evaluate it.
+function start_ssh_agent {
+  ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+  chmod 600 "${SSH_ENV}"
+  . "${SSH_ENV}" > /dev/null
+}
+
+# If an environment file exists, run it to pick up the correct environment
+# variables. If it turns out that the agent is no longer running, start a new
+# agent. This will update the environment file. If there was no environment
+# file, also start a new agent (and write the environment file).
+if [ -f "${SSH_ENV}" ]; then
+  . "${SSH_ENV}" > /dev/null
+  ps ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+    start_ssh_agent;
+  }
+else
+  start_ssh_agent;
+fi
 
 # Set suffix aliases to open certain files with an editor by default.
 alias -s cpp=gvim
