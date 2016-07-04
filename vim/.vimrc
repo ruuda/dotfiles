@@ -14,9 +14,10 @@ set shiftwidth=2
 set expandtab
 set smarttab
 
-" Enable auto-indent and smart indent.
-set ai
-set si
+" Enable auto-indent (copies the indent of the current line when starting a
+" new line) and smart indent (increase indent after brackets and such).
+set autoindent
+set smartindent
 
 " Highlight the column after the text width.
 set colorcolumn=+1
@@ -31,7 +32,7 @@ set incsearch
 
 " Highlight matching brackets for 0.2 seconds.
 set showmatch
-set mat=2
+set matchtime=2
 
 " Enable filetype detection, and load filetype-specific plugins and
 " indentation.
@@ -40,8 +41,8 @@ filetype plugin indent on
 " Enable visual autocomplete of commands.
 set wildmenu
 
-" Enable the ruler.
-set ru
+" Enable the ruler that shows the cursor position.
+set ruler
 
 " Automatically reload files if they changed outside of Vim, do not ask.
 set autoread
