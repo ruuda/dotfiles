@@ -16,6 +16,3 @@
 [submodule "vim/.vim/bundle/vim-scala"]
 	path = vim/.vim/bundle/vim-scala
 	url = https://github.com/derekwyatt/vim-scala
-[submodule "vim/.vim/bundle/vim-hardtime"]
-	path = vim/.vim/bundle/vim-hardtime
-	url = https://github.com/takac/vim-hardtime
