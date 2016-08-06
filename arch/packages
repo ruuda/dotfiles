@@ -13,6 +13,7 @@ btrfs-progs
 cabal-install
 chromium
 clang
+cloc
 cmake
 cryptsetup
 darktable
@@ -97,7 +98,6 @@ pacman
 parallel
 patch
 pcmciautils
-pep8
 perf
 picard
 pkg-config
@@ -107,6 +107,7 @@ powertop
 pv
 pwgen
 python-fonttools
+python-pycodestyle
 python-scipy
 python-sympy
 python2-fonttools

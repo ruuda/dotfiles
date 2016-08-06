@@ -59,7 +59,7 @@ def main():
         '\nThe following desired native packages are not installed:\n')
 
     print_list(non_explicit_pkgs,
-        '\nThe following desired native packages are installed, but not explicitly:\n')
+        '\nThe following native packages should be reinstalled with --asexplicit:\n')
 
     print_list(unexpected_deps,
         '\nThe following native packages should be reinstalled with --asdeps:\n')
