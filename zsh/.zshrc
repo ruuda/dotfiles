@@ -63,8 +63,15 @@ alias ls='ls --color=auto --quoting-style=literal'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
-# Use Git's diff functionality instead of GNU Diff. Git's is far superior.
-alias diff='git diff --no-index'
+# Use Git's diff functionality instead of GNU Diff. Git's is far superior. Use a
+# function instead of an alias so we can define a custom autocomplete that
+# completes files, not Git stuff.
+function diff() {
+  git diff --no-index "$@"
+}
+
+# Autocomplete the diff alias.
+compdef '_path_files _path_files' diff
 
 # Allow exit the Vim way.
 alias :q='exit'
