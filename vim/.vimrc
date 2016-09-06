@@ -15,9 +15,11 @@ set expandtab
 set smarttab
 
 " Enable auto-indent (copies the indent of the current line when starting a
-" new line) and smart indent (increase indent after brackets and such).
+" new line). Do *not* enable smart indent, it breaks stuff for many languages
+" (including comments in Python), and the filetype specific plugins should
+" have a better indentation scheme anyway.
 set autoindent
-set smartindent
+set nosmartindent
 
 " Highlight the column after the text width.
 set colorcolumn=+1
