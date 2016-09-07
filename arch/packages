@@ -18,7 +18,6 @@ cmake
 cryptsetup
 darktable
 dconf-editor
-devhelp
 dhcpcd
 ed
 emacs
@@ -33,6 +32,7 @@ fontforge
 gcc
 gdb
 gedit
+gedit-plugins
 ghc
 ghex
 gimp
@@ -45,6 +45,7 @@ gnome-control-center
 gnome-devel-docs
 gnome-disk-utility
 gnome-font-viewer
+gnome-icon-theme-extras
 gnome-keyring
 gnome-logs
 gnome-screenshot
@@ -55,7 +56,6 @@ gnome-system-monitor
 gnome-terminal
 gnome-tweak-tool
 gnome-user-docs
-gnome-weather
 grub
 grep
 gst-libav
@@ -69,7 +69,6 @@ inetutils
 inkscape
 intel-ucode
 iputils
-libgnome
 libraw
 libva-intel-driver
 licenses
