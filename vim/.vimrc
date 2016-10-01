@@ -126,6 +126,8 @@ if has("gui_running")
     set guifont=Consolas:h12:cANSI
   elseif has("gui_gtk2")
     set guifont=Consolas\ 12
+  elseif has("gui_gtk3")
+    set guifont=Consolas\ 12
   endif
 
   " Make the window wider and higher.
