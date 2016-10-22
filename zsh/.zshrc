@@ -57,9 +57,9 @@ export CPP='clang -E'
 export CXX='clang++'
 export EDITOR='vim'
 
-# Colour ls and grep output by default.
-# Also prevent ls from quoting names with spaces.
-alias ls='ls --color=auto --quoting-style=literal'
+# Colour ls and grep output by default. Also prevent ls from quoting names with
+# spaces. Furthermore, list directories before files.
+alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
