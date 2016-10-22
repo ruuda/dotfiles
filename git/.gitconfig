@@ -29,6 +29,11 @@
   # from spreading further.
   fsckObjects = true
 
+[tag]
+  # Sort the output of git tag in version order, so you get v1, v2, ..., v9, v10
+  # instead of v1, v10, v2, ..., v9.
+  sort = version:refname
+
 [diff]
   # Try harder to produce a clean diff. The histogram algorithm is an extension
   # of the patience algorithm that happens to be faster than patience and faster
