@@ -22,7 +22,6 @@ dhcpcd
 ed
 emacs
 eog
-epiphany
 evince
 extra-cmake-modules
 fakeroot
@@ -56,8 +55,8 @@ gnome-system-monitor
 gnome-terminal
 gnome-tweak-tool
 gnome-user-docs
-grub
 grep
+grub
 gst-libav
 gthumb
 gtk-doc
@@ -106,13 +105,16 @@ powertop
 pv
 pwgen
 python-fonttools
+python-pip
 python-pycodestyle
 python-scipy
 python-sympy
+python-virtualenv
 python2-fonttools
 python2-pip
 python2-sympy
 python2-virtualenv
+qcachegrind
 quodlibet
 r
 rsync
