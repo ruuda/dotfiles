@@ -118,6 +118,9 @@ alias -s h=gvim
 alias -s md=gvim
 alias -s rs=gvim
 
+# Make R store local packages in a sane location.
+export R_LIBS_USER="$HOME/.local/lib/R/library"
+
 # Customise the prompt, first load the plugins to set the colour and get the Git
 # status.
 autoload -Uz colors
