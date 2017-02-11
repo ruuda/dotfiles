@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Usage: ./gc-all-repos.sh PATH [--aggressive]
+# Usage: ./gc-all-repos.sh [--aggressive] [--auto] PATH
 #
 # Runs 'git gc' in all directories in PATH which contain a (bare) Git
 # repository.
 
-if [ "$1" == "--aggressive" ]; then
+if [ "$1" == "--aggressive" ] || [ "$1" == "--auto" ]; then
   git_args=$1
   basedir=$2
 else
