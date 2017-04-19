@@ -42,7 +42,7 @@
 
   # Try to break up diffs at blank lines, so you don't get those brackets
   # floating away.
-  compactionHeuristic = true
+  indentHeuristic = true
 
 [merge]
   # Show the common ancestor for merge conflicts.
