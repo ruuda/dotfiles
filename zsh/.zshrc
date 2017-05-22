@@ -63,6 +63,12 @@ alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
+# Journalctl is quite verbose by default, and its timestamp does not include the
+# year. Fix that by picking ISO 8601 timestamps and omitting the hostname.
+# (I wish there were a mode that replaces the T in ISO 8601 with a normal space.
+# It hurts readability and there is no ambiguity anyway. </rant>)
+alias journalctl='journalctl --output=short-iso --no-hostname'
+
 # Use Git's diff functionality instead of GNU Diff. Git's is far superior. Use a
 # function instead of an alias so we can define a custom autocomplete that
 # completes files, not Git stuff.
