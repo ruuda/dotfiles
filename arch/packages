@@ -7,8 +7,10 @@ autoconf
 automake
 baobab
 bind-tools
+bison
 blender
 boost
+borg
 btrfs-progs
 cabal-install
 chromium
@@ -18,6 +20,7 @@ cmake
 cryptsetup
 darktable
 dconf-editor
+devhelp
 dhcpcd
 ed
 emacs
@@ -55,6 +58,8 @@ gnome-system-monitor
 gnome-terminal
 gnome-tweak-tool
 gnome-user-docs
+gptfdisk
+graphviz
 grep
 grub
 gst-libav
@@ -64,6 +69,7 @@ gucharmap
 gvfs-mtp
 gvim
 htop
+id3v2
 inetutils
 inkscape
 intel-ucode
@@ -86,6 +92,7 @@ mono
 nano
 nautilus
 netctl
+ninja
 nmap
 ntfs-3g
 openssh
@@ -146,7 +153,6 @@ ttf-freefont
 ttf-gentium
 ttf-inconsolata
 ttf-linux-libertine
-ttf-oxygen
 usbutils
 valgrind
 vi
