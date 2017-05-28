@@ -21,8 +21,10 @@ cryptsetup
 darktable
 dconf-editor
 devhelp
+dfu-util
 dhcpcd
 ed
+efibootmgr
 emacs
 eog
 evince
@@ -30,6 +32,7 @@ extra-cmake-modules
 fakeroot
 file-roller
 firefox
+flex
 fontforge
 gcc
 gdb
@@ -81,6 +84,7 @@ linux
 linux-headers
 llvm
 logrotate
+lua
 lvm2
 lzop
 make
@@ -99,6 +103,7 @@ openssh
 optipng
 otf-fira-mono
 otf-fira-sans
+otf-ipafont
 pacman
 parallel
 patch
@@ -124,6 +129,7 @@ python2-virtualenv
 qcachegrind
 quodlibet
 r
+rlwrap
 rsync
 sbt
 scala
@@ -144,6 +150,7 @@ texlive-latexextra
 texlive-pictures
 texlive-science
 thunderbird
+time
 tk
 totem
 transmission-gtk
