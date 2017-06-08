@@ -19,3 +19,6 @@
 [submodule "vim/.vim/bundle/elm.vim"]
 	path = vim/.vim/bundle/elm.vim
 	url = https://github.com/lambdatoast/elm.vim
+[submodule "vim/.vim/bundle/vim-antlr"]
+	path = vim/.vim/bundle/vim-antlr
+	url = https://github.com/jrozner/vim-antlr
