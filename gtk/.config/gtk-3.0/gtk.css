@@ -11,3 +11,23 @@ VteTerminal, vte-terminal, TerminalScreen {
     padding: 10px 10px 10px 10px;
     -VteTerminal-inner-border: 10px 10px 10px 10px;
 }
+
+@define-color solarized-dark-bg #002b36;
+@define-color solarized-dark-fg #586e75;
+@define-color solarized-light-fg #93a1a1;
+@define-color solarized-light-bg #fdf6e3;
+
+/* Fix ugly borders of the gVim window; set them to the same background color as
+ * the text editing area. Unfortunately this does not allow switching between
+ * light and dark mode. */
+window#vim-main-window {
+  background-color: @solarized-dark-bg;
+}
+
+window#vim-main-window scrollbar {
+  background-color: @solarized-dark-bg;
+}
+
+window#vim-main-window scrollbar slider {
+  background-color: @solarized-dark-fg;
+}
