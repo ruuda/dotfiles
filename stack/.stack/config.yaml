@@ -4,6 +4,9 @@ templates:
     author-name: Ruud van Asseldonk
     github-username: ruuda
 
+build:
+  split-objs: true
+
 package-indices:
   - name: Hackage
     download-prefix: https://s3.amazonaws.com/hackage.fpcomplete.com/package/
