@@ -62,3 +62,7 @@
   # If rerere successfully resolved a conflict, stage the conflicted
   # file automatically.
   autoupdate = true
+
+[core]
+  # Enable a global gitignore (mine ignores Vim swap files).
+  excludesfile = ~/.gitignore
