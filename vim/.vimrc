@@ -21,6 +21,9 @@ set smarttab
 set autoindent
 set nosmartindent
 
+" Do not insert a line break when I type past the text width.
+set formatoptions-=t
+
 " Highlight the column after the text width.
 set colorcolumn=+1
 
