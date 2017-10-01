@@ -3,6 +3,7 @@ adobe-source-sans-pro-fonts
 adobe-source-serif-pro-fonts
 afl
 agda
+antlr4
 autoconf
 automake
 baobab
@@ -12,12 +13,12 @@ blender
 boost
 borg
 btrfs-progs
-cabal-install
 chromium
 clang
 cloc
 cmake
 cryptsetup
+ctags
 darktable
 dconf-editor
 devhelp
@@ -34,11 +35,11 @@ file-roller
 firefox
 flex
 fontforge
+fsharp
 gcc
 gdb
 gedit
 gedit-plugins
-ghc
 ghex
 gimp
 git
@@ -61,6 +62,7 @@ gnome-system-monitor
 gnome-terminal
 gnome-tweak-tool
 gnome-user-docs
+goaccess
 gptfdisk
 graphviz
 grep
@@ -129,6 +131,7 @@ python2-virtualenv
 qcachegrind
 quodlibet
 r
+rkhunter
 rlwrap
 rsync
 sbt
@@ -136,7 +139,6 @@ scala
 seahorse
 shntool
 sshfs
-stack
 stow
 subversion
 sudo
