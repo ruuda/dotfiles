@@ -38,6 +38,7 @@ fontforge
 fsharp
 gcc
 gdb
+gdm
 gedit
 gedit-plugins
 ghex
@@ -134,10 +135,12 @@ r
 rkhunter
 rlwrap
 rsync
+rustup
 sbt
 scala
 seahorse
 shntool
+shuffle
 sshfs
 stow
 subversion
@@ -147,7 +150,6 @@ texlive-bibtexextra
 texlive-core
 texlive-fontsextra
 texlive-formatsextra
-texlive-genericextra
 texlive-latexextra
 texlive-pictures
 texlive-science
@@ -155,6 +157,7 @@ thunderbird
 time
 tk
 totem
+traceroute
 transmission-gtk
 tree
 ttf-bitstream-vera
@@ -162,6 +165,7 @@ ttf-freefont
 ttf-gentium
 ttf-inconsolata
 ttf-linux-libertine
+ttf-roboto
 usbutils
 valgrind
 vi
