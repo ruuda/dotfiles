@@ -12,7 +12,7 @@ package-indices:
     download-prefix: https://s3.amazonaws.com/hackage.fpcomplete.com/package/
 
     # Not using the http one, because it does not support signature verification.
-    http: https://s3.amazonaws.com/hackage.fpcomplete.com/00-index.tar.gz
+    http: https://s3.amazonaws.com/hackage.fpcomplete.com/01-index.tar.gz
 
     # Some packages in Stackage snapshots do not have hashes.
     require-hashes: false
