@@ -7,11 +7,13 @@ antlr4
 autoconf
 automake
 baobab
+biber
 bind-tools
 bison
 blender
 boost
 borg
+brotli
 btrfs-progs
 chromium
 clang
@@ -24,6 +26,7 @@ dconf-editor
 devhelp
 dfu-util
 dhcpcd
+diffoscope
 ed
 efibootmgr
 emacs
@@ -55,6 +58,7 @@ gnome-font-viewer
 gnome-icon-theme-extras
 gnome-keyring
 gnome-logs
+gnome-mplayer
 gnome-screenshot
 gnome-shell
 gnome-shell-extensions
@@ -95,6 +99,7 @@ man-db
 man-pages
 meld
 mercurial
+meson
 mono
 nano
 nautilus
@@ -130,6 +135,7 @@ python2-pip
 python2-sympy
 python2-virtualenv
 qcachegrind
+qemu
 quodlibet
 r
 rkhunter
@@ -143,6 +149,7 @@ shntool
 shuffle
 sshfs
 stow
+strace
 subversion
 sudo
 terminus-font
