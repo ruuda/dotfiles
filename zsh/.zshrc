@@ -57,6 +57,9 @@ export CPP='clang -E'
 export CXX='clang++'
 export EDITOR='vim'
 
+# Add ~/.local/bin to the path.
+export PATH="$PATH:$HOME/.local/bin"
+
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
