@@ -7,6 +7,7 @@ antlr4
 autoconf
 automake
 baobab
+bazel
 biber
 bind-tools
 bison
@@ -65,8 +66,9 @@ gnome-shell-extensions
 gnome-system-log
 gnome-system-monitor
 gnome-terminal
-gnome-tweak-tool
+gnome-tweaks
 gnome-user-docs
+gnuplot
 goaccess
 gptfdisk
 graphviz
@@ -84,6 +86,7 @@ inetutils
 inkscape
 intel-ucode
 iputils
+ledger
 libraw
 libva-intel-driver
 licenses
@@ -125,6 +128,7 @@ powertop
 pv
 pwgen
 python-fonttools
+python-matplotlib
 python-pip
 python-pycodestyle
 python-scipy
