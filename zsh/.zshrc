@@ -60,6 +60,9 @@ export EDITOR='vim'
 # Add ~/.local/bin to the path.
 export PATH="$PATH:$HOME/.local/bin"
 
+# Allow cd'ing into subdirectories of ~/repos and ~/profile from anywhere.
+export CDPATH=".:$HOME/repos:$HOME/profile"
+
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
