@@ -85,6 +85,14 @@ function diff() {
 # Autocomplete the diff alias.
 compdef '_path_files _path_files' diff
 
+# Fuzzy cd with fzf,
+# based on https://github.com/junegunn/fzf/wiki/Examples#changing-directory.
+function fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
 # Allow exit the Vim way.
 alias :q='exit'
 
