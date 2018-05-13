@@ -40,13 +40,13 @@ firefox
 flex
 fontforge
 fsharp
+fzf
 gcc
 gdb
 gdm
 gedit
 gedit-plugins
 ghex
-gimp
 git
 gitg
 gnome-backgrounds
@@ -78,6 +78,7 @@ gst-libav
 gthumb
 gtk-doc
 gucharmap
+guetzli
 gvfs-mtp
 gvim
 htop
@@ -127,11 +128,13 @@ polari
 powertop
 pv
 pwgen
+python-docs
 python-fonttools
 python-matplotlib
 python-pip
 python-pycodestyle
 python-scipy
+python-sphinx
 python-sympy
 python-virtualenv
 python2-fonttools
@@ -167,6 +170,7 @@ texlive-science
 thunderbird
 time
 tk
+tmux
 totem
 traceroute
 transmission-gtk
