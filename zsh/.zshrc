@@ -58,7 +58,7 @@ export CXX='clang++'
 export EDITOR='vim'
 
 # Add ~/.local/bin to the path.
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/bin:$HOME/.nix-profile/bin"
 
 # Allow cd'ing into subdirectories of ~/repos and ~/profile from anywhere.
 export CDPATH=".:$HOME/repos:$HOME/profile"
