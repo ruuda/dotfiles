@@ -23,6 +23,13 @@
   fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
   diffcontext = 4
   encoding = utf-8
+
+[branch]
+  # Set the upstream to the current branch when using `git checkout -b`, in
+  # order to keep track of where we branched from, to ease rebases. Especially
+  # useful when many branches branched from one another and some of them have
+  # been rebased in the mean time.
+  autoSetupMerge = always
   
 [push]
   # Push only the current branch.
