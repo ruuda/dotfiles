@@ -12,8 +12,11 @@
   pl = pull --ff-only --no-rebase
 
   # Show branches, upstream, and difference with upstream, nicely aligned.
-  # Width of %(upstream:track) is 22 characters for '[ahead XX, behind XXX]'.
-  br = branch --format '%(color:white)%(HEAD) %(color:yellow)%(objectname:short=7)%(color:reset) %(align:26)%(refname:short)%(end) %(color:cyan)%(align:22,right)%(upstream:track)%(end)%(color:reset) %(color:blue)%(upstream:short)%(color:reset)'
+  br = !git branch --format '\
+%(HEAD)%00\
+%(objectname:short=7)%00\
+%(refname)%00%(refname:short)%00\
+%(upstream)%00%(upstream:short)%00%(upstream:track)' $1 | $HOME/dotfiles/git-br.py
 
   # When used after a pull, shows all new commits from old to new.
   # Optionally takes the branch name.
