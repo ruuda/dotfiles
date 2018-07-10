@@ -15,6 +15,10 @@
   # Optionally takes the branch name.
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
 
+[status]
+  # Do not abbreviate directories of all untracked files.
+  showUntrackedFiles = all
+
 [gui]
   fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
   diffcontext = 4
