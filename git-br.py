@@ -92,7 +92,7 @@ cyan        = '\033[36m'
 white       = '\033[37m'
 
 for b in aligned:
-    print(f'{bold if b.head == "*" else ""}{b.head} '
+    print(f'{bold + "●" if b.head == "*" else " "} '
           f'{yellow}{b.hash_short}{reset_color} '
           f'{b.refname_short} '
           f'{cyan}{b.upstream_track}{reset_color} '
