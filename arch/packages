@@ -95,6 +95,7 @@ linux
 linux-headers
 llvm
 logrotate
+lsof
 lua
 lvm2
 lzop
@@ -119,10 +120,9 @@ otf-ipafont
 pacman
 parallel
 patch
-pcmciautils
 perf
 picard
-pkg-config
+pkgconf
 pngcrush
 polari
 powertop
@@ -136,6 +136,7 @@ python-pycodestyle
 python-scipy
 python-sphinx
 python-sympy
+python-tensorflow-opt
 python-virtualenv
 python2-fonttools
 python2-pip
@@ -154,6 +155,7 @@ scala
 seahorse
 shntool
 shuffle
+squashfs-tools
 sshfs
 stow
 strace
@@ -186,6 +188,7 @@ valgrind
 vi
 wget
 which
+whois
 xclip
 xdg-user-dirs
 xf86-input-libinput
