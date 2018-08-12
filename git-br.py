@@ -29,7 +29,7 @@ class Branch(typing.NamedTuple):
 
 
 def parse_line(line: str) -> Branch:
-    # Split at null separators in the format string, remote trailing newline.
+    # Split at null separators in the format string, remove trailing newline.
     return Branch(*line[:-1].split('\0'))
 
 def get_children(branches, parent_refname):
