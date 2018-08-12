@@ -14,18 +14,19 @@
 #
 # See also the alias line in my .gitconfig.
 
-import collections
 import sys
+import typing
 
-Branch = collections.namedtuple('Branch', [
-    'head',
-    'hash_short',
-    'refname',
-    'refname_short',
-    'upstream',
-    'upstream_short',
-    'upstream_track',
-])
+
+class Branch(typing.NamedTuple):
+    head: str
+    hash_short: str
+    refname: str
+    refname_short: str
+    upstream: str
+    upstream_short: str
+    upstream_track: str
+
 
 def parse_line(line: str) -> Branch:
     # Split at null separators in the format string, remote trailing newline.
