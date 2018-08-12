@@ -15,17 +15,17 @@
 # See also the alias line in my .gitconfig.
 
 import sys
-import typing
+from typing import Any, NamedTuple
 
 
-class Branch(typing.NamedTuple):
-    head: str
-    hash_short: str
-    refname: str
-    refname_short: str
-    upstream: str
-    upstream_short: str
-    upstream_track: str
+class Branch(NamedTuple):
+    head: Any
+    hash_short: Any
+    refname: Any
+    refname_short: Any
+    upstream: Any
+    upstream_short: Any
+    upstream_track: Any
 
 
 def parse_line(line: str) -> Branch:
