@@ -32,42 +32,53 @@ def parse_line(line: str) -> Branch:
     # Split at null separators in the format string, remove trailing newline.
     return Branch(*line[:-1].split('\0'))
 
+
 def get_children(branches, parent_refname):
-    return [(branch, get_children(branches, branch.refname))
-            for branch in branches
-            if branch.upstream == parent_refname]
+    return [
+        (branch, get_children(branches, branch.refname))
+        for branch in branches
+        if branch.upstream == parent_refname
+    ]
+
 
 def flatten(indent, branch, children):
     yield branch._replace(refname_short=indent + branch.refname_short)
     for child, its_children in children:
         yield from flatten(indent + '  ', child, its_children)
 
+
 def ljust(xs, n):
     return [x.ljust(n) for x in xs]
+
 
 def rjust(xs, n):
     return [x.rjust(n) for x in xs]
 
+
 def fmap(f, xs):
     return Branch(*(f(x) for x in xs))
+
 
 def apply(fs, xs, ys):
     return Branch(*(f(x, y) for f, x, y in zip(fs, xs, ys)))
 
+
 branches = [parse_line(line) for line in sys.stdin]
 refnames = {branch.refname for branch in branches}
 
-# Make all branches roots of which the upstream is not in the list (such as when
-# the upstream is a remote branch, but remotes are not listed).
-branches = [branch._replace(upstream='')
-            if branch.upstream not in refnames
-            else branch
-            for branch in branches]
+# Make all branches roots of which the upstream is not in the list (such as
+# when the upstream is a remote branch, but remotes are not listed).
+branches = [
+    branch._replace(upstream='') if branch.upstream not in refnames else branch
+    for branch in branches
+]
 
-# Order branches so children are below their parents with indented short refname.
-branches = [indented
-            for branch, children in get_children(branches, '')
-            for indented in flatten('', branch, children)]
+# Order children below their parents with indented short refname.
+branches = [
+    indented
+    for branch, children in get_children(branches, '')
+    for indented in flatten('', branch, children)
+]
 
 # Transpose list of branches to columns of values. Align each column.
 # Then transpose back.
