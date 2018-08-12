@@ -22,7 +22,7 @@ parseBranch =
   in
     makeBranch . take 7 . splitNull
 
-data Node a = Node (Branch a) [Node a]
+data Node a = Node (Branch a) [Node a] deriving Show
 
 getChildren :: Eq a => [Branch a] -> a -> [Node a]
 getChildren branches parentRefname =
@@ -31,6 +31,15 @@ getChildren branches parentRefname =
     isChild branch = parentRefname == upstream branch
   in
     fmap makeNode $ filter isChild branches
+
+flatten :: String -> [Node String] -> [Branch String]
+flatten indent =
+  let
+    indented branch = branch { refnameShort = indent ++ refnameShort branch }
+    flattenNode (Node branch children) =
+      indented branch : flatten (indent ++ "  ") children
+  in
+    concatMap flattenNode
 
 gitBr :: [String] -> [String]
 gitBr lines =
@@ -41,8 +50,9 @@ gitBr lines =
       if upstream branch `Set.member` refnames
         then branch
         else branch { upstream = "" }
+    branchTree = flatten "" $ getChildren (fmap fixUpstream branches) ""
   in
-    fmap show (fmap fixUpstream branches)
+    fmap refnameShort $ branchTree
 
 main :: IO ()
 main = interact (unlines . gitBr . lines)
