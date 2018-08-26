@@ -52,6 +52,7 @@ gitg
 gnome-backgrounds
 gnome-calculator
 gnome-characters
+gnome-clocks
 gnome-control-center
 gnome-devel-docs
 gnome-disk-utility
@@ -59,7 +60,7 @@ gnome-font-viewer
 gnome-icon-theme-extras
 gnome-keyring
 gnome-logs
-gnome-mplayer
+gnome-mpv
 gnome-screenshot
 gnome-shell
 gnome-shell-extensions
@@ -102,6 +103,7 @@ lzop
 make
 man-db
 man-pages
+mediainfo
 meld
 mercurial
 meson
