@@ -23,8 +23,10 @@
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
 
 [status]
-  # Do not abbreviate directories of all untracked files.
-  showUntrackedFiles = all
+  # Abbreviate directories of untracked files. I briefly set this to "all", but
+  # that is annoying for cache directories that I haven't .gitignored, the
+  # default is better after all. I am mainly leaving this here as a reminder.
+  showUntrackedFiles = normal
 
 [gui]
   fontdiff = -family Consolas -size 10 -weight normal -slant roman -underline 0 -overstrike 0
