@@ -22,6 +22,9 @@
   # Optionally takes the branch name.
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
 
+  # Delete all branches that have been merged into master.
+  gc-branches = !git branch --merged master | egrep -v master | xargs git branch -d
+
 [status]
   # Abbreviate directories of untracked files. I briefly set this to "all", but
   # that is annoying for cache directories that I haven't .gitignored, the
