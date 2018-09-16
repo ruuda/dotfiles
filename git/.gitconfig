@@ -89,3 +89,13 @@
 [core]
   # Enable a global gitignore (mine ignores Vim swap files).
   excludesfile = ~/.gitignore
+
+[tig]
+  # Configure the Tig curses UI to look a bit nicer.
+  line-graphics = utf-8
+  commit-order = topo
+  mailmap = true
+  main-view-author = email-user,width=10
+  main-view-commit-title = graph=v2,refs=true
+  main-view-date = display=relative-compact
+  reference-format = <tag> (branch) hide:remote
