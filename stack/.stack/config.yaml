@@ -3,13 +3,3 @@ templates:
     author-email: dev@veniogames.com
     author-name: Ruud van Asseldonk
     github-username: ruuda
-
-package-indices:
-  - name: Hackage
-    download-prefix: https://s3.amazonaws.com/hackage.fpcomplete.com/package/
-
-    # Not using the http one, because it does not support signature verification.
-    http: https://s3.amazonaws.com/hackage.fpcomplete.com/01-index.tar.gz
-
-    # Some packages in Stackage snapshots do not have hashes.
-    require-hashes: false
