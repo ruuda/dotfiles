@@ -102,6 +102,9 @@ set tags=tags;/
 " Filetype specific
 " =================
 
+" Use the Haskell file type to highlight Purescript; it's close enough
+autocmd BufRead,BufNewFile *.purs setlocal filetype=haskell
+
 " I cannot get ~/vimfiles/ftplugin working, so this is the second option:
 " Rust uses four-space indentation.
 au FileType rust set tabstop=4 shiftwidth=4
