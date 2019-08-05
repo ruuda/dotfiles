@@ -25,6 +25,9 @@
   # Delete all branches that have been merged into master.
   gc-branches = !git branch --merged master | egrep -v master | xargs git branch -d
 
+  # Set upstream to master.
+  upmaster = branch --set-upstream-to=master
+
 [status]
   # Abbreviate directories of untracked files. I briefly set this to "all", but
   # that is annoying for cache directories that I haven't .gitignored, the
