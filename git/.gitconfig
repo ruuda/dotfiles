@@ -12,7 +12,8 @@
   pl = pull --ff-only --no-rebase
 
   # Show branches, upstream, and difference with upstream, nicely aligned.
-  br = !git branch --format '\
+  # Sort from older to newer.
+  br = !git branch --sort=committerdate --format '\
 %(HEAD)%00\
 %(objectname:short=7)%00\
 %(refname)%00%(refname:short)%00\
