@@ -4,9 +4,13 @@ adobe-source-serif-pro-fonts
 afl
 agda
 antlr4
+arc-gtk-theme
+audacity
 autoconf
+autogen
 automake
 baobab
+base
 bazel
 biber
 bind-tools
@@ -16,6 +20,7 @@ boost
 borg
 brotli
 btrfs-progs
+celluloid
 chromium
 clang
 cloc
@@ -46,6 +51,7 @@ gdb
 gdm
 gedit
 gedit-plugins
+gentium-plus-font
 ghex
 git
 gitg
@@ -60,7 +66,6 @@ gnome-font-viewer
 gnome-icon-theme-extras
 gnome-keyring
 gnome-logs
-gnome-mpv
 gnome-screenshot
 gnome-shell
 gnome-shell-extensions
@@ -88,12 +93,14 @@ inetutils
 inkscape
 intel-ucode
 iputils
+kakoune
 ledger
 libraw
 libva-intel-driver
 licenses
 linux
 linux-headers
+lld
 llvm
 logrotate
 lsof
@@ -108,6 +115,7 @@ meld
 mercurial
 meson
 mono
+mypy
 nano
 nautilus
 netctl
@@ -140,7 +148,6 @@ python-sphinx
 python-sympy
 python-tensorflow-opt
 python-virtualenv
-python2-fonttools
 python2-pip
 python2-sympy
 python2-virtualenv
@@ -157,12 +164,15 @@ scala
 seahorse
 shntool
 shuffle
+smartmontools
+sqlitebrowser
 squashfs-tools
 sshfs
 stow
 strace
 subversion
 sudo
+swi-prolog
 terminus-font
 texlive-bibtexextra
 texlive-core
@@ -172,6 +182,7 @@ texlive-latexextra
 texlive-pictures
 texlive-science
 thunderbird
+tig
 time
 tk
 tmux
@@ -180,8 +191,8 @@ traceroute
 transmission-gtk
 tree
 ttf-bitstream-vera
+ttf-font-awesome
 ttf-freefont
-ttf-gentium
 ttf-inconsolata
 ttf-linux-libertine
 ttf-roboto
