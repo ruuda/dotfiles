@@ -71,6 +71,10 @@
   # floating away.
   indentHeuristic = true
 
+  # Remove a/ and b/ on filenames in diffs. There is already a +++ and --- in
+  # front, so it adds nothing.
+  noprefix = true
+
 [merge]
   # Show the common ancestor for merge conflicts.
   conflictstyle = diff3
