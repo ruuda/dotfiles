@@ -148,11 +148,14 @@ autoload -Uz vcs_info
 colors
 
 # If any Nix store paths are on the path, extract the package name part from the
-# directory. These act as a kind of virtualenv indicator.
+# directory. These act as a kind of virtualenv indicator. We first locate all
+# Nix store paths that occur in the path, printing the matches, one per line.
+# Then with Awk we cut off the store path prefix, and print everything on a
+# single line, by setting the output record separator (ORS) to the empty string.
 nix_paths=$(
   echo $PATH                                                  \
   | grep -E '/nix/store/[a-z0-9]{32}-([^/]+)' --only-matching \
-  | awk '{ print substr($1, 45, length($1)) " " }'            \
+  | awk 'ORS = ""; { print substr($1, 45, length($1)) " " }'  \
 )
 nix_info_msg="%{$fg[blue]%}${nix_paths}%{$reset_color%}"
 
