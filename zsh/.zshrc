@@ -147,6 +147,15 @@ autoload -Uz colors
 autoload -Uz vcs_info
 colors
 
+# If any Nix store paths are on the path, extract the package name part from the
+# directory. These act as a kind of virtualenv indicator.
+nix_paths=$(
+  echo $PATH                                                  \
+  | grep -E '/nix/store/[a-z0-9]{32}-([^/]+)' --only-matching \
+  | awk '{ print substr($1, 45, length($1)) " " }'            \
+)
+nix_info_msg="%{$fg[blue]%}${nix_paths}%{$reset_color%}"
+
 # Retrieve source control status before printing the prompt.
 precmd() { vcs_info }
 
@@ -170,4 +179,4 @@ setopt prompt_subst
 # (There is no different charater for a root prompt, as root does not use this
 # .zshrc anyway.)
 PS1='
-%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${vcs_info_msg_0_}%{$fg[white]%}$%{$reset_color%} '
+%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${nix_info_msg}${vcs_info_msg_0_}%{$fg[white]%}$%{$reset_color%} '
