@@ -29,6 +29,10 @@
   # Set upstream to master.
   upmaster = branch --set-upstream-to=master
 
+  # Glone: Github-clone. Needs the function wrapper, otherwise the arguments get
+  # passed twice somehow.
+  glone = "!glone() { git clone https://github.com/$1; }; glone"
+
 [status]
   # Abbreviate directories of untracked files. I briefly set this to "all", but
   # that is annoying for cache directories that I haven't .gitignored, the
