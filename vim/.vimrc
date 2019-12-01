@@ -75,20 +75,32 @@ endif
 " Enable syntax highlighting.
 syntax enable
 
-" For CtrlP, suggest files from a Git repository. First list all tracked files
+" Set up the FZF fuzzy file finder.
+"
+" Previously I also used CtrlP, but there are two advantages to FZF over CtrlP:
+" * It is faster, which matters on large repositories such as Chromium.
+" * It is better at ranking relevant matches. In the Nixpkgs repository, I often
+"   fail to locate a file with CtrlP, but FZF does find it.
+"
+" There are also disadvantages:
+" * FZF needs to be installed, pure Vim does not suffice.
+" * In the past FZF did not integrate as nicely with the Vim window as CtrlP
+"   did, but nowadays it does.
+"
+" For FZF, suggest files from a Git repository. First list all tracked files
 " (ls-files), then list all untracked files that are not ignored (second
 " invocation of ls-files). Git can list them in one command, but listing
 " untracked files is noticeably slower and introduces a delay. By listing these
-" files last, CtrlP can start scanning through the tracked files immediately,
+" files last, FZF can start scanning through the tracked files immediately,
 " which are also accessed most often.
-let g:ctrlp_user_command =
-  \ ['.git', 'cd %s && git ls-files && git ls-files --other --exclude-standard']
+function! FuzzyFindFile()
+  " Note: Don't line-wrap this long line, that results in invalid syntax.
+  call fzf#run({'source':'git ls-files && git ls-files --other --exclude-standard', 'sink': 'e'})
+endfunction
 
-" With caching enabled, new untracked files will not show up, so disable it.
-let g:ctrlp_use_caching = 0
-
-" Open CtrlP with Leader + F in addition to Ctrl + P. It is much more ergonomic.
-noremap <Leader>f :CtrlP<Return>
+" Open the FZF fuzzy finder on Leader + F. It is more ergonomic than the more
+" common Ctrl + P.
+noremap <Leader>f :call FuzzyFindFile()<Return>
 
 " Save and save-quit with Leader + W and Leader + X. in addition to :w. The
 " colon requires holding shift, which is hurting my fingers.
