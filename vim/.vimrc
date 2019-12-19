@@ -93,14 +93,12 @@ syntax enable
 " untracked files is noticeably slower and introduces a delay. By listing these
 " files last, FZF can start scanning through the tracked files immediately,
 " which are also accessed most often.
-function! FuzzyFindFile()
-  " Note: Don't line-wrap this long line, that results in invalid syntax.
-  call fzf#run({'source':'git ls-files && git ls-files --other --exclude-standard', 'sink': 'e'})
-endfunction
+command! FuzzyFindFile call fzf#run(fzf#wrap({
+    \ 'source':'git ls-files && git ls-files --other --exclude-standard' }))
 
 " Open the FZF fuzzy finder on Leader + F. It is more ergonomic than the more
 " common Ctrl + P.
-noremap <Leader>f :call FuzzyFindFile()<Return>
+noremap <Leader>f :FuzzyFindFile<Return>
 
 " Save and save-quit with Leader + W and Leader + X. in addition to :w. The
 " colon requires holding shift, which is hurting my fingers.
