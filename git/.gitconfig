@@ -29,6 +29,9 @@
   # Set upstream to master.
   upmaster = branch --set-upstream-to=master
 
+  # Force-push with lease.
+  pushf = push --force-with-lease
+
   # Glone: Github-clone. Needs the function wrapper, otherwise the arguments get
   # passed twice somehow.
   glone = "!glone() { git clone https://github.com/$1; }; glone"
