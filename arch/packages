@@ -148,9 +148,6 @@ python-sphinx
 python-sympy
 python-tensorflow-opt
 python-virtualenv
-python2-pip
-python2-sympy
-python2-virtualenv
 qcachegrind
 qemu
 quodlibet
