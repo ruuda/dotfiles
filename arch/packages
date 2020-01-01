@@ -27,6 +27,7 @@ cloc
 cmake
 cryptsetup
 ctags
+cups
 darktable
 dconf-editor
 devhelp
@@ -45,6 +46,7 @@ firefox
 flex
 fontforge
 fsharp
+fwupd
 fzf
 gcc
 gdb
@@ -92,6 +94,7 @@ id3v2
 inetutils
 inkscape
 intel-ucode
+iotop
 iputils
 kakoune
 ledger
