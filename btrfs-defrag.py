@@ -53,6 +53,13 @@ def get_exclusive_files(fnames: List[str]) -> Iterable[str]:
             yield filename.decode('utf-8')
 
 
+def defrag(fnames: List[str]) -> Iterable[int]:
+    subprocess.run(['btrfs', 'filesystem', 'defragment', '-v', *fnames])
+    yield len(fnames)
+
+
 if __name__ == '__main__':
-    for z in map_chunks(get_exclusive_files, 5, list_files()):
-        print(z)
+    all_files = list_files()
+    exclusive_files = map_chunks(get_exclusive_files, 5, all_files)
+    defrag_counts = map_chunks(defrag, 5, exclusive_files)
+    print(sum(defrag_counts), 'files defragmented')
