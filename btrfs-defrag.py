@@ -7,12 +7,9 @@
 # related neighbouring rights to this software to the public domain worldwide.
 # See the CC0 dedication at https://creativecommons.org/publicdomain/zero/1.0/.
 
-# Expects output from "git branch" with the following --format:
-#
-#     %(HEAD)%00%(objectname:short=7)%00%(refname)%00%(refname:short)%00
-#     %(upstream)%00%(upstream:short)%00%(upstream:track)
-#
-# See also the alias line in my .gitconfig.
+"""
+Defragment all exclusive (non-reflinked) files under the current directory.
+"""
 
 import os
 import os.path
@@ -54,7 +51,7 @@ def get_exclusive_files(fnames: List[str]) -> Iterable[str]:
 
 
 def defrag(fnames: List[str]) -> Iterable[int]:
-    subprocess.run(['btrfs', 'filesystem', 'defragment', '-v', *fnames])
+    subprocess.run(['btrfs', 'filesystem', 'defragment', '-t', '512M', '-v', *fnames])
     yield len(fnames)
 
 
