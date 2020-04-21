@@ -31,3 +31,6 @@
 [submodule "vim/.vim/bundle/vim-nix"]
 	path = vim/.vim/bundle/vim-nix
 	url = https://github.com/LnL7/vim-nix
+[submodule "vim/.vim/bundle/vim-lion"]
+	path = vim/.vim/bundle/vim-lion
+	url = https://github.com/tommcdo/vim-lion
