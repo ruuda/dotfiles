@@ -101,6 +101,8 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+alias nsh='nix run -c $SHELL'
+
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
 # unlock the key every time. Therefore start an ssh-agent that is shared among
 # all shells, but do not load a key immediately. A manual ssh-add is still
