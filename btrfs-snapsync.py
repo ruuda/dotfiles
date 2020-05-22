@@ -15,7 +15,12 @@ corruption in the event of btrfs bugs.
 
 Usage:
 
-    btrfs-snapsync.py <source-dir> <dest-dir>
+    btrfs-snapsync.py [--dry-run] [--single] <source-dir> <dest-dir>
+
+Options:
+
+    --dry-run    Print commands that would be executed but do not execute them.
+    --single     Stop after syncing one subvolume, even if more are missing.
 
 Source-dir should contain subvolumes named YYYY-MM-DD. Those will be replicated
 as read-only subvolumes in the destination directory.
@@ -27,15 +32,25 @@ It is assumed that subvolumes whose dates are closer together share more, so
 when picking a base subvolume for transfer, the existing subvolume with the
 nearest date is used as a starting point. This works both forward and backward
 in time.
+
+This command might need to run as superuser.
 """
 
 import os
 import os.path
 import sys
 import datetime
+import subprocess
 
 from datetime import date
-from typing import Optional, Set, Tuple
+from typing import Optional, List, Set, Tuple
+
+
+def run(args: List[str], *, dry_run: bool) -> None:
+    if dry_run:
+        print('Would run', ' '.join(args))
+    else:
+        subprocess.run(args, check=True)
 
 
 def list_subvolumes(path: str) -> Set[date]:
@@ -60,7 +75,7 @@ def hausdorff_distance(x: date, ys: Set[date]) -> Tuple[int, date]:
     return min(candidates)
 
 
-def sync_one(src: str, dst: str) -> Optional[date]:
+def sync_one(src: str, dst: str, *, dry_run: bool) -> Optional[date]:
     """
     From the snapshots that are present in src and missing in dst, pick the one
     that is closest to an existing snapshot in dst, and sync it. Returns the
@@ -81,21 +96,75 @@ def sync_one(src: str, dst: str) -> Optional[date]:
     )
     best_candidate = min(transfer_candidates)
     num_days, base_date, sync_date = best_candidate
+    base_dir = base_date.isoformat()
+    sync_dir = sync_date.isoformat()
 
-    print(num_days, base_date, sync_date)
+    print(f'Syncing {sync_dir}, using {base_dir} as base.')
+
+    # Create a writeable snapshot of the base subvolume.
+    cmd = [
+        'btrfs', 'subvolume', 'snapshot',
+        os.path.join(dst, base_dir),
+        os.path.join(dst, sync_dir),
+    ]
+    run(cmd, dry_run=dry_run)
+
+    # Sync into it.
+    cmd = [
+        'rsync',
+        '-a',
+        '--delete-delay',
+        '--inplace',
+        '--preallocate',
+        '--no-whole-file',
+        '--info=progress2',
+        os.path.join(src, sync_dir) + '/',
+        os.path.join(dst, sync_dir),
+    ]
+    run(cmd, dry_run=dry_run)
+
+    # Once that is done, make the snapshot readonly.
+    cmd = [
+        'btrfs', 'property', 'set',
+        '-t', 'subvol',
+        os.path.join(dst, sync_dir),
+        'ro', 'true',
+    ]
+    run(cmd, dry_run=dry_run)
+
     return sync_date
 
 
-def main(src: str, dst: str) -> None:
+def main(src: str, dst: str, *, dry_run: bool, single: bool) -> None:
     while True:
-        synced_day = sync_one(src, dst)
+        synced_day = sync_one(src, dst, dry_run=dry_run)
+
         if synced_day is None:
+            break
+
+        if single:
+            print('Stopping after one transfer because of --single.')
+            break
+
+        if dry_run:
+            print('Stopping now to avoid endless loop because of --dry-run.')
             break
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    args = list(sys.argv)
+
+    dry_run = '--dry-run' in args
+    if dry_run:
+        args.remove('--dry-run')
+
+    single = '--single' in args
+    if single:
+        args.remove('--single')
+
+    if len(args) != 3:
         print(__doc__)
         sys.exit(1)
+
     else:
-        main(sys.argv[1], sys.argv[2])
+        main(args[1], args[2], dry_run=dry_run, single=single)
