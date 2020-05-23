@@ -61,17 +61,29 @@ def list_subvolumes(path: str) -> Set[date]:
     }
 
 
+def date_distance(x: date, y: date) -> int:
+    """
+    Return the number of days between x and y if x < y, or twice that if x > y.
+    This gives a bias to building backwards, which makes sense because
+    subvolumes tend to accumulate growth. Missing files are more likely to be
+    present in a future snapshot than in a past snapshot.
+    """
+    x_day_number = x.toordinal()
+    y_day_number = y.toordinal()
+    diff = y_day_number - x_day_number
+    if diff < 0:
+        return diff * -2
+    else:
+        return diff
+
+
 def hausdorff_distance(x: date, ys: Set[date]) -> Tuple[int, date]:
     """
     Return the date in ys that is closest to x,
     and the number of days they are apart.
     """
     assert len(ys) > 0, 'Need to have at least one base snapshot to start from.'
-    x_day_number = x.toordinal()
-    candidates = (
-        (abs(x_day_number - y.toordinal()), y)
-        for y in ys
-    )
+    candidates = ((date_distance(x, y), y) for y in ys)
     return min(candidates)
 
 
@@ -110,6 +122,8 @@ def sync_one(src: str, dst: str, *, dry_run: bool) -> Optional[date]:
     run(cmd, dry_run=dry_run)
 
     # Sync into it.
+    # Would be nice to use reflink support once that gets mainstream.
+    # https://bugzilla.samba.org/show_bug.cgi?id=10170
     cmd = [
         'rsync',
         '-a',
@@ -117,6 +131,10 @@ def sync_one(src: str, dst: str, *, dry_run: bool) -> Optional[date]:
         '--inplace',
         '--preallocate',
         '--no-whole-file',
+        '--fuzzy', '--fuzzy',
+        # In absence of reflink support for rsync, use hardlinks instead, the
+        # file tree is immutable anyway.
+        '--link-dest', os.path.join(dst, base_dir),
         '--info=progress2',
         os.path.join(src, sync_dir) + '/',
         os.path.join(dst, sync_dir),
