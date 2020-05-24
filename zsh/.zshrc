@@ -1,7 +1,7 @@
-# Keep history for 10000 commands.
+# Keep history for 50000 commands.
 HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=50000
+SAVEHIST=50000
 
 # Do not put duplicate entries in the history. What is the point of pressing the
 # up arrow thirty times and nothing happens?
