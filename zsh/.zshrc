@@ -154,10 +154,12 @@ colors
 # Nix store paths that occur in the path, printing the matches, one per line.
 # Then with Awk we cut off the store path prefix, and print everything on a
 # single line, by setting the output record separator (ORS) to the empty string.
+# Truncate to 30 characters if there's a lot of store paths on the path.
 nix_paths=$(
   echo $PATH                                                  \
   | grep -E '/nix/store/[a-z0-9]{32}-([^/]+)' --only-matching \
   | awk 'ORS = ""; { print substr($1, 45, length($1)) " " }'  \
+  | awk '{ if (length($0) > 30) { print substr($0, 0, 30) "… " } else { print $0 }}'
 )
 nix_info_msg="%{$fg[blue]%}${nix_paths}%{$reset_color%}"
 
