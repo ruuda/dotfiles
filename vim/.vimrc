@@ -27,9 +27,9 @@ set formatoptions-=t
 " Highlight the column after the text width.
 set colorcolumn=+1
 
-" Show relative line numbers.
+" Show line numbers. In the past I also had 'relativenumber' enabled, but in
+" practice having absolute line numbers is more useful.
 set number
-set relativenumber
 
 " Highlight search results, do incremental search.
 " set hlsearch -- or not, looks ugly
