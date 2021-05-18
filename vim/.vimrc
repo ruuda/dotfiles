@@ -117,28 +117,10 @@ set tags=tags;/
 " Filetype specific
 " =================
 
+" See also the files in after/ftplugin.
+
 " Use the Haskell file type to highlight Purescript; it's close enough
 autocmd BufRead,BufNewFile *.purs setlocal filetype=haskell
-
-" I cannot get ~/vimfiles/ftplugin working, so this is the second option:
-" Rust uses four-space indentation.
-au FileType rust set tabstop=4 shiftwidth=4
-
-" Rust builds with Cargo
-au FileType rust set makeprg=cargo\ build
-
-" I prefer 80-column files over the default 100.
-au FileType rust set textwidth=80
-
-" Disable smart indent and cindent (brackets indent) for TeX files. Setting
-" indentexpr to empty ensures that Vim does not mess up things after typing a
-" curly bracket. Build TeX with latexmk.
-au FileType tex set nosmartindent nocindent indentexpr=
-if has("win32") " The dash should not be escaped on Windows.
-  au FileType tex set makeprg=latexmk\  -xelatex\ %
-else
-  au FileType tex set makeprg=latexmk\ \-xelatex\ %
-endif
 
 " Disable folding of markdown files.
 let g:vim_markdown_folding_disabled=1
