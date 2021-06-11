@@ -1,0 +1,11 @@
+" These are the IntelliJ equivalents of the mappings in my .vimrc.
+
+" Normally I use \f for fzf fuzzy search, now use IntelliJ's.
+:map <Leader>f <Action>(GotoFile)
+
+noremap <Leader>w :w<Return>
+noremap <Leader>x :x<Return>
+
+noremap <Leader>c "+
+noremap <Leader>p "+p
+noremap <Leader>P "+P
