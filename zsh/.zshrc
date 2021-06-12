@@ -63,6 +63,10 @@ export PATH="$PATH:$HOME/.local/bin:$HOME/.nix-profile/bin"
 # Allow cd'ing into subdirectories of ~/repos and ~/profile from anywhere.
 export CDPATH=".:$HOME/repos:$HOME/profile"
 
+# I only use Nix with locally pinned files, there should not be any global Nix
+# search path. Unset the one that came with the AUR "nix" package.
+unset NIX_PATH
+
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
