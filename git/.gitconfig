@@ -63,6 +63,14 @@
   # from spreading further.
   fsckObjects = true
 
+[submodule]
+  # Enable --recurse-submodules by default, which in particular ensures that
+  # when you check out a commit in a repository that has submodules, it also
+  # checks out the right commit in the submodules. Without this, you have to run
+  # "git submodule update" manually, or you'd end up with a dirty working
+  # directory.
+  recurse = true
+
 [tag]
   # Sort the output of git tag in version order, so you get v1, v2, ..., v9, v10
   # instead of v1, v10, v2, ..., v9.
