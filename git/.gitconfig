@@ -4,6 +4,13 @@
   signingkey = 0599697D
 
 [alias]
+  # When checking something out, if that causes submodules to be at a different
+  # version than currently checked out, also check out the right commit in the
+  # submodule. This --recurse-submodules is not always desirable for all Git
+  # commands, so rather than setting the global option, we make it apply only to
+  # checkout here.
+  checkout = checkout --recurse-submodules
+
   # The format string is the same as --decorate=short, but with the branch/tag
   # markers after the commit message instead of in front of it.
   hist = log   --oneline --format='%C(auto)%h %s%d'
@@ -69,7 +76,10 @@
   # checks out the right commit in the submodules. Without this, you have to run
   # "git submodule update" manually, or you'd end up with a dirty working
   # directory.
-  recurse = true
+  # Update: Or don't, because it also makes "git fetch" and "git grep" recurse
+  # into submodules, and especially for the latter this is annoying. Instead,
+  # I'll add a "checkout" alias to recurse by default.
+  recurse = false
 
 [tag]
   # Sort the output of git tag in version order, so you get v1, v2, ..., v9, v10
