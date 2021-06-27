@@ -1,3 +1,6 @@
 # Vim swap files.
 *.swo
 *.swp
+
+# Nix development environments created by my alias.
+.nix-devenv

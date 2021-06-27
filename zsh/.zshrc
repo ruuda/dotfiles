@@ -105,7 +105,14 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
-alias nsh='nix run -c $SHELL'
+# Enter a Nix development environment, and create an indirect GC root for it
+# at .nix-devenv, to ensure that it does not get garbage collected during the
+# next 'nix-store --gc'.
+function nsh {
+  nix build --no-link
+  nix-store --add-root .nix-devenv --indirect --realize $(nix path-info) > /dev/null
+  nix run -c $SHELL
+}
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
 # unlock the key every time. Therefore start an ssh-agent that is shared among
