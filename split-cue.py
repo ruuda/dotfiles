@@ -27,6 +27,8 @@ def breakpoints(cue_fname: str) -> Iterable[str]:
     """
     yield '00:00.00'
     yield from run('cuebreakpoints', '--append-gaps', cue_fname)
+    # 'flac --until' interprets -0 as the end of the file.
+    yield '-0'
 
 
 def track_infos(cue_fname: str) -> Iterable[Tuple[str, str]]:
@@ -36,6 +38,13 @@ def track_infos(cue_fname: str) -> Iterable[Tuple[str, str]]:
     for line in run('cueprint', '--track-template', '%n %t\n', cue_fname):
         track_num, title = line.split(' ', maxsplit=1)
         yield track_num, title
+
+
+def disc_info(cue_fname: str) -> Iterable[str]:
+    """
+    Return the performer and album title.
+    """
+    return run('cueprint', '--disc-template', '%P\n%T\n', cue_fname)
 
 
 def main() -> None:
@@ -53,6 +62,8 @@ def main() -> None:
 
     timecodes = list(breakpoints(cue_fname))
     infos = list(track_infos(cue_fname))
+    performer, album = disc_info(cue_fname)
+
     for start, end, (track_num, title) in zip(timecodes, timecodes[1:], infos):
         subprocess.run(
             [
@@ -63,6 +74,8 @@ def main() -> None:
                 f'--until={end}',
                 f'--tag=TITLE={title}',
                 f'--tag=TRACKNUMBER={track_num}',
+                f'--tag=ALBUMARTIST={performer}',
+                f'--tag=ALBUM={album}',
                 audio_fname,
                 f'--output-name={track_num} - {title.replace("/", "-")}.flac',
             ],
