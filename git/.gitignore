@@ -3,4 +3,7 @@
 *.swp
 
 # Nix development environments created by my alias.
-.nix-devenv
+.nix-devenv/
+
+# IntelliJ files.
+.idea/
