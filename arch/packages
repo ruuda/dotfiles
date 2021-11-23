@@ -3,7 +3,6 @@ adobe-source-sans-fonts
 adobe-source-serif-fonts
 afl
 alsa-utils
-antlr4
 arc-gtk-theme
 autoconf
 autogen
@@ -32,7 +31,6 @@ cups
 darktable
 dconf-editor
 ddcutil
-devhelp
 dfu-util
 dhcpcd
 diffoscope
@@ -64,7 +62,6 @@ gnome-calculator
 gnome-characters
 gnome-clocks
 gnome-control-center
-gnome-devel-docs
 gnome-disk-utility
 gnome-font-viewer
 gnome-icon-theme-extras
@@ -91,7 +88,6 @@ graphviz
 grep
 gst-libav
 gthumb
-gtk-doc
 gucharmap
 guetzli
 guvcview
@@ -107,20 +103,19 @@ inkscape
 intel-ucode
 iotop
 iputils
+iwd
 john
 kakoune
 kcov
 krita
 ledger
 libertinus-font
-libraw
 libva-intel-driver
-licenses
 linux
 linux-headers
+linux-firmware
 lld
 llvm
-logrotate
 lsof
 lua
 lvm2
@@ -136,12 +131,12 @@ mercurial
 meson
 mkvtoolnix-cli
 monero-gui
-mono
 mypy
 nano
 nautilus
 ncdu
 netctl
+networkmanager
 ninja
 nix
 nmap
@@ -191,7 +186,6 @@ quodlibet
 r
 rawtherapee
 reflector
-rhythmbox
 ripgrep
 rkhunter
 rlwrap
@@ -246,8 +240,6 @@ which
 whois
 wireshark-qt
 xclip
-xdg-user-dirs
-xf86-input-libinput
 xf86-input-wacom
 xf86-video-intel
 yelp
