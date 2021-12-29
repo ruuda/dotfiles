@@ -67,6 +67,11 @@ export CDPATH=".:$HOME/repos:$HOME/profile"
 # search path. Unset the one that came with the AUR "nix" package.
 unset NIX_PATH
 
+# Add a pinned version of Nix 2.3 to the path.
+# Nix 2.4 broke the entire CLI and there is no easy way to avoid it,
+# so instead stick with 2.3.
+alias nix='/nix/store/9hkh1fx8z1frgbz2nawr0mnyvizrb8yk-nix-2.3.15/bin/nix'
+
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
