@@ -78,6 +78,13 @@ alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 
+# MPV with loudness normalization, for watching movies or series without having
+# to turn up the volume if there’s a conversation and then having to turn it
+# down when there’s an explosion. We add a compressor with 40ms attack and 3s
+# release (quite long, otherwise the effect is very apparent and that destroys
+# the content).
+alias mpv-loudnorm='mpv --audio-channels=stereo --af="acompressor=ratio=6:attack=40:release=3000,loudnorm=I=-18"'
+
 # Journalctl is quite verbose by default, and its timestamp does not include the
 # year. Fix that by picking ISO 8601 timestamps and omitting the hostname.
 # (I wish there were a mode that replaces the T in ISO 8601 with a normal space.
