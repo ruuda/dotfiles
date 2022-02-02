@@ -101,8 +101,9 @@
   noprefix = true
 
 [merge]
-  # Show the common ancestor for merge conflicts.
-  conflictstyle = diff3
+  # Show the common ancestor for merge conflicts (diff3), but do remove any
+  # shared prefixes and suffixes between the two sides (zdiff3).
+  conflictstyle = zdiff3
   tool = gvimdiff
 
 [rebase]
