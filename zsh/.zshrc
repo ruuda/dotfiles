@@ -27,6 +27,10 @@ source ~/.zkbd/$TERM
 [[ -n ${key[End]}    ]] && bindkey "${key[End]}"    end-of-line
 [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}" delete-char
 
+# Use FZF for history search (Ctrl + R), and use Ctrl + T to insert a file name
+# from the current directory.
+source /usr/share/fzf/key-bindings.zsh
+
 # Make Ctrl + Z discard the current input, and bring it up again after the next
 # command has finished. Ctrl-Z on empty input will still background the process.
 ctrl-z-stash() {
