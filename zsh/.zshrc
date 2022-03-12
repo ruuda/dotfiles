@@ -87,7 +87,7 @@ alias egrep='egrep --color=auto'
 # down when there’s an explosion. We add a compressor with 40ms attack and 3s
 # release (quite long, otherwise the effect is very apparent and that destroys
 # the content).
-alias mpv-loudnorm='mpv --audio-channels=stereo --af="acompressor=ratio=6:attack=40:release=3000,loudnorm=I=-18"'
+alias mpv-loudnorm='gnome-session-inhibit mpv --audio-channels=stereo --af="acompressor=ratio=6:attack=40:release=3000,loudnorm=I=-18"'
 
 # Journalctl is quite verbose by default, and its timestamp does not include the
 # year. Fix that by picking ISO 8601 timestamps and omitting the hostname.
