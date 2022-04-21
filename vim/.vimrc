@@ -45,6 +45,14 @@ set incsearch
 set showmatch
 set matchtime=2
 
+" Configure the file browser to be more useful. Disable the banner, opt for a
+" more tree-like browsing experience. Open files in the previous window. Cover
+" 33% of the window width when opened.
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_winsize = 33
+
 " Enable filetype detection, and load filetype-specific plugins and
 " indentation.
 filetype plugin indent on
