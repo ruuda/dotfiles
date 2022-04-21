@@ -17,7 +17,7 @@ def run(*cmd: str) -> Iterable[str]:
     """
     Run a command, return its stdout line by line.
     """
-    out = subprocess.run(cmd, capture_output=True, check=True, encoding='utf-8')
+    out = subprocess.run(cmd, capture_output=True, check=True, encoding='utf-8', errors='replace')
     return out.stdout.splitlines()
 
 
