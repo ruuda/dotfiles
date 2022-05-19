@@ -97,8 +97,9 @@
   indentHeuristic = true
 
   # Remove a/ and b/ on filenames in diffs. There is already a +++ and --- in
-  # front, so it adds nothing.
-  noprefix = true
+  # front, so it adds nothing. Edit: Actually, this interferes with `git
+  # format-patch` and creates unapplicable patches, disable it after all.
+  noprefix = false
 
 [merge]
   # Show the common ancestor for merge conflicts (diff3), but do remove any
