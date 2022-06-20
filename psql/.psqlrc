@@ -1,0 +1,13 @@
+-- Set border style to 2, where 0 = no border, 1 = internal deviding lines,
+-- 2 = outer frame as well. Also use Unicode box drawing chars to draw the table.
+\pset border 2
+\pset linestyle unicode
+
+-- If values are longer than the column headers, try wrapping instead of making
+-- a ridiculously wide table.
+\pset format wrapped
+
+-- Instead of wrapping long lines over the terminal, make the pager do
+-- horizontal scrolling.
+\setenv PAGER less
+\setenv LESS --chop-long-lines
