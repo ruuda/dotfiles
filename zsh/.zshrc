@@ -30,6 +30,10 @@ source ~/.zkbd/$TERM
 # Use FZF for history search (Ctrl + R), and use Ctrl + T to insert a file name
 # from the current directory.
 source /usr/share/fzf/key-bindings.zsh
+# For some reason FZF started not respecting the default chronological order in
+# reverse-i-search, make it do that after all. Also make the color integrate a
+# bit more nicely.
+export FZF_DEFAULT_OPTS="--no-sort --color=dark,bg+:0"
 
 # Make Ctrl + Z discard the current input, and bring it up again after the next
 # command has finished. Ctrl-Z on empty input will still background the process.
