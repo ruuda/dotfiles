@@ -32,8 +32,9 @@ source ~/.zkbd/$TERM
 source /usr/share/fzf/key-bindings.zsh
 # For some reason FZF started not respecting the default chronological order in
 # reverse-i-search, make it do that after all. Also make the color integrate a
-# bit more nicely.
-export FZF_DEFAULT_OPTS="--no-sort --color=dark,bg+:0"
+# bit more nicely. Edit: remove the --no-sort again, I think it was working
+# better without it after all ... not sure what changed there.
+export FZF_DEFAULT_OPTS="--color=dark,bg+:0"
 
 # Make Ctrl + Z discard the current input, and bring it up again after the next
 # command has finished. Ctrl-Z on empty input will still background the process.
