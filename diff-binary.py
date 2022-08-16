@@ -17,9 +17,8 @@ import sys
 import difflib
 
 def load(fname: str) -> bytes:
-    with open(fname, 'r', encoding='utf-8') as f:
-        # Cut off the "0x"
-        return bytes.fromhex(f.read()[2:])
+    with open(fname, 'rb') as f:
+        return f.read()
 
 
 def print_hex(b: bytes, prefix: str = '  ', suffix: str = '\n'):
