@@ -81,6 +81,9 @@ unset NIX_PATH
 # so instead stick with 2.3.
 alias nix='/nix/store/9hkh1fx8z1frgbz2nawr0mnyvizrb8yk-nix-2.3.15/bin/nix'
 
+# But I do want to use flakes some times too, so add a Nix with flakes as well.
+alias nix210='/nix/store/l0iqmrkw6l78fsixm8l9j6w52372wkhm-nix-2.10.3/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes'
+
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
@@ -133,6 +136,13 @@ function nsh {
   nix build --no-link
   nix-store --add-root .nix-devenv --indirect --realize $(nix path-info) > /dev/null
   nix run -c $SHELL
+}
+
+# Same but then for using flakes.
+function fsh {
+  storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default 2>/dev/null)
+  nix-store --add-root .nix-devenv --indirect --realize ${storepath} > /dev/null
+  nix210 develop --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
