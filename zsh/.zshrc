@@ -203,6 +203,10 @@ nix_paths=$(
   | awk 'ORS = ""; { print substr($1, 45, length($1)) " " }'  \
   | awk '{ if (length($0) > 30) { print substr($0, 0, 30) "… " } else { print $0 }}'
 )
+# Alternatively, for my newer workflow, we can tell the name from the GC root.
+if [[ -v NIX_GCROOT ]]; then
+  nix_paths=$(echo $NIX_GCROOT | awk '{ print substr($0, 45) " " }')
+fi
 nix_info_msg="%{$fg[blue]%}${nix_paths}%{$reset_color%}"
 
 # Retrieve source control status before printing the prompt.
