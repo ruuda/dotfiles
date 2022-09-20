@@ -140,7 +140,7 @@ function nsh {
 
 # Same but then for using flakes.
 function fsh {
-  storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default 2>/dev/null)
+  storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
   nix-store --add-root .nix-devenv --indirect --realize ${storepath} > /dev/null
   nix210 develop --command $SHELL
 }

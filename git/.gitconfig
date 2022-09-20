@@ -104,7 +104,7 @@
 [merge]
   # Show the common ancestor for merge conflicts (diff3), but do remove any
   # shared prefixes and suffixes between the two sides (zdiff3).
-  conflictstyle = zdiff3
+  conflictstyle = diff3
   tool = gvimdiff
 
 [rebase]
@@ -137,3 +137,7 @@
   main-view-commit-title = graph=v2,refs=true
   main-view-date = display=relative-compact
   reference-format = <tag> (branch) hide:remote
+
+[maintenance]
+  repo = /home/ruud/repos/nixpkgs
+  repo = /home/ruud/repos/linux
