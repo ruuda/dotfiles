@@ -140,7 +140,21 @@ function nsh {
 
 # Same but then for using flakes.
 function fsh {
-  nix210 develop --profile .nix-devenv --command $SHELL
+  # Build the devShell itself, record its store path.
+  shell_storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
+
+  # Adding a GC root for just the shell is insufficient, because Nix needs the
+  # flake inputs to determine the store path of the shell. `flake archive` can
+  # give us the store paths for the flake inputs, then we pass all of those to
+  # nix-store --add-root along the the shell itself.
+  nix210 flake archive --dry-run --json \
+    | jq --raw-output '.. | .path? | select(. != null)' \
+    | xargs --max-procs=1 \
+    nix-store --add-root .nix-devenv --indirect --realise ${shell_storepath} \
+    > /dev/null
+
+  # Finally, enter the development shell itself.
+  nix210 develop --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
