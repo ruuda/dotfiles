@@ -140,9 +140,7 @@ function nsh {
 
 # Same but then for using flakes.
 function fsh {
-  storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
-  nix-store --add-root .nix-devenv --indirect --realize ${storepath} > /dev/null
-  nix210 develop --command $SHELL
+  nix210 develop --profile .nix-devenv --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
