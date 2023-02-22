@@ -1,0 +1,11 @@
+[Unit]
+Description=Prefetch %i.git
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySeconds=600
+
+[Install]
+WantedBy=timers.target
+

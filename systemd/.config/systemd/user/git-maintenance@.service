@@ -1,0 +1,25 @@
+# This unit is a simple alternative to https://git-scm.com/docs/git-maintenance.
+# The upstream one will try to unlock the system keyring, it does not play well
+# with my ssh-agent. This unit does not try to unlock the keyring, so it only
+# works for public repositories.
+
+[Unit]
+Description=Prefetch %i.git
+Wants=network.target nss-lookup.target
+After=network-online.target nss-lookup.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ruud/repos/%i
+ExecStart=git fetch --prefetch --write-commit-graph --no-auto-gc origin
+
+# Hardening options.
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
