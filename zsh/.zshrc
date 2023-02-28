@@ -148,7 +148,7 @@ function fsh {
   # give us the store paths for the flake inputs, then we pass all of those to
   # nix-store --add-root along the the shell itself.
   nix210 flake archive --dry-run --json \
-    | jq --raw-output '.. | .path? | select(. != null)' \
+    | jq --raw-output '.inputs | .. | .path? | select(. != null)' \
     | xargs --max-procs=1 \
     nix-store --add-root .nix-devenv --indirect --realise ${shell_storepath} \
     > /dev/null
