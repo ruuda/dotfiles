@@ -141,7 +141,7 @@ function nsh {
 # Same but then for using flakes.
 function fsh {
   # Build the devShell itself, record its store path.
-  shell_storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
+  shell_storepath=$(nix210 path-info .#devShells.x86_64-linux.default)
 
   # Adding a GC root for just the shell is insufficient, because Nix needs the
   # flake inputs to determine the store path of the shell. `flake archive` can
