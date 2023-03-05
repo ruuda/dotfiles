@@ -11,6 +11,11 @@ After=network-online.target nss-lookup.target
 [Service]
 Type=oneshot
 WorkingDirectory=/home/ruud/repos/%i
+# It seems that often the fetch fails with a name resolution failure, despite
+# the After=network-online and nss-lookup ... then hack it by adding some sleep
+# in there. (The timer has a randomized delay too, but it does not apply when we
+# missed the time slot and the unit executes after boot.)
+ExecStartPre=/usr/bin/sleep 60s
 ExecStart=git fetch --prefetch --write-commit-graph --no-auto-gc origin
 
 # Hardening options.
