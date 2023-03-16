@@ -78,11 +78,15 @@ unset NIX_PATH
 
 # Add a pinned version of Nix 2.3 to the path.
 # Nix 2.4 broke the entire CLI and there is no easy way to avoid it,
-# so instead stick with 2.3.
-alias nix='/nix/store/9hkh1fx8z1frgbz2nawr0mnyvizrb8yk-nix-2.3.15/bin/nix'
+# so stick with 2.3 for most things.
+alias nix23='/nix/store/9hkh1fx8z1frgbz2nawr0mnyvizrb8yk-nix-2.3.15/bin/nix'
 
 # But I do want to use flakes some times too, so add a Nix with flakes as well.
 alias nix210='/nix/store/l0iqmrkw6l78fsixm8l9j6w52372wkhm-nix-2.10.3/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes'
+
+# And default to Nix 2.14 from now on.
+alias nix214='/nix/store/9yyfg6fzhs4sf454q2rf179kp3miy9mg-nix-2.14.1/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes'
+alias nix='nix214'
 
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
@@ -133,28 +137,28 @@ alias .....='cd ../../../..'
 # at .nix-devenv, to ensure that it does not get garbage collected during the
 # next 'nix-store --gc'.
 function nsh {
-  nix build --no-link
-  nix-store --add-root .nix-devenv --indirect --realize $(nix path-info) > /dev/null
-  nix run -c $SHELL
+  nix23 build --no-link
+  nix-store --add-root .nix-devenv --indirect --realize $(nix23 path-info) > /dev/null
+  nix23 run -c $SHELL
 }
 
 # Same but then for using flakes.
 function fsh {
   # Build the devShell itself, record its store path.
-  shell_storepath=$(nix210 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
+  shell_storepath=$(nix214 build --no-link --print-out-paths .#devShells.x86_64-linux.default)
 
   # Adding a GC root for just the shell is insufficient, because Nix needs the
   # flake inputs to determine the store path of the shell. `flake archive` can
   # give us the store paths for the flake inputs, then we pass all of those to
   # nix-store --add-root along the the shell itself.
-  nix210 flake archive --dry-run --json \
+  nix214 flake archive --dry-run --json \
     | jq --raw-output '.inputs | .. | .path? | select(. != null)' \
     | xargs --max-procs=1 \
     nix-store --add-root .nix-devenv --indirect --realise ${shell_storepath} \
     > /dev/null
 
   # Finally, enter the development shell itself.
-  nix210 develop --command $SHELL
+  nix214 develop --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
