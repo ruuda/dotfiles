@@ -27,6 +27,10 @@ set smarttab
 set autoindent
 set nosmartindent
 
+" By default if you Shift+J or gq a piece of text, Vim will insert a double
+" space after a period. Don't do that.
+set nojoinspaces
+
 " Do not insert a line break when I type past the text width.
 set formatoptions-=t
 
