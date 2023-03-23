@@ -37,6 +37,9 @@ set formatoptions-=t
 " Highlight the column after the text width.
 set colorcolumn=+1
 
+" Default to 80 columns. Can be overridden by the file type later.
+set textwidth=80
+
 " Show line numbers. In the past I also had 'relativenumber' enabled, but in
 " practice having absolute line numbers is more useful.
 set number
