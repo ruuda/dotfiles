@@ -121,6 +121,20 @@ command! FuzzyFindFile call fzf#run(fzf#wrap({
 " common Ctrl + P.
 noremap <Leader>f :FuzzyFindFile<Return>
 
+" Use Vim's theme colors for the FZF window.
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal']
+\ , 'bg':      ['bg', 'Normal']
+\ , 'gutter':  ['bg', 'Normal']
+\ , 'bg+':     ['bg', 'CursorColumn']
+\ , 'pointer': ['fg', 'DiffChange']
+\ , 'prompt':  ['fg', 'WarningMsg']
+\ , 'hl':      ['fg', 'PreProc']
+\ , 'hl+':     ['fg', 'PreProc']
+\ , 'info':    ['fg', 'LineNr']
+\ , 'border':  ['fg', 'LineNr']
+\ }
+
 " Save and save-quit with Leader + W and Leader + X. in addition to :w. The
 " colon requires holding shift, which is hurting my fingers.
 noremap <Leader>w :w<Return>
@@ -165,6 +179,9 @@ if has("gui_running")
   elseif has("gui_gtk3")
     set guifont=Consolas\ 12
   endif
+
+  " Needed to make FZF use the color theme.
+  set termguicolors
 
   " Make the window wider and higher.
   set columns=110
