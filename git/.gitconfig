@@ -26,6 +26,24 @@
 %(refname)%00%(refname:short)%00\
 %(upstream)%00%(upstream:short)%00%(upstream:track)' $1 | $HOME/dotfiles/git-br.py
 
+  # Same as the "br" command above, but then pipe everything into fzf, configure
+  # fzf to filter on the branch name (field 3), print the branch name on exit
+  # (the enter rebind), and then put all of *that* into a "git checkout" to
+  # switch to that branch.
+  b = !git checkout $(\
+git branch --sort=committerdate --format '\
+%(HEAD)%00\
+%(objectname:short=7)%00\
+%(refname)%00%(refname:short)%00\
+%(upstream)%00%(upstream:short)%00%(upstream:track)' $1 |\
+$HOME/dotfiles/git-br.py |\
+fzf \
+--ansi --no-sort --tac \
+--delimiter '[● ]+' \
+--nth 3 \
+--preview 'git log --stat --color=always -5 {2}' \
+--bind 'enter:execute(echo {3})+abort')
+
   # When used after a pull, shows all new commits from old to new.
   # Optionally takes the branch name.
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
