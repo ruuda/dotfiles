@@ -2,7 +2,10 @@
 " ==================================================
 
 " Enable completion for language servers through Ale.
+" Disable the annoying errors at the end of the line, I'll use the normal
+" tooltip on hover.
 let g:ale_completion_enabled = 1
+let g:ale_virtualtext_cursor = 'disabled'
 
 " Enable Pathogen.
 execute pathogen#infect()
