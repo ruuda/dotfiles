@@ -81,12 +81,15 @@ unset NIX_PATH
 # so stick with 2.3 for most things.
 alias nix23='/nix/store/9hkh1fx8z1frgbz2nawr0mnyvizrb8yk-nix-2.3.15/bin/nix'
 
-# But I do want to use flakes some times too, so add a Nix with flakes as well.
-alias nix210='/nix/store/l0iqmrkw6l78fsixm8l9j6w52372wkhm-nix-2.10.3/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes'
+nix_flags='--extra-experimental-features nix-command --extra-experimental-features flakes'
 
-# And default to Nix 2.14 from now on.
-alias nix214='/nix/store/9yyfg6fzhs4sf454q2rf179kp3miy9mg-nix-2.14.1/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes'
-alias nix='nix214'
+# But I do want to use flakes some times too, so add a Nix with flakes as well.
+alias nix210="/nix/store/l0iqmrkw6l78fsixm8l9j6w52372wkhm-nix-2.10.3/bin/nix ${nix_flags}"
+alias nix214="/nix/store/9yyfg6fzhs4sf454q2rf179kp3miy9mg-nix-2.14.1/bin/nix ${nix_flags}"
+alias nix215="/nix/store/sfkx0h38w2mcf1nqab6zvm5nza77fsd9-nix-2.15.0/bin/nix ${nix_flags}"
+
+# And default to a recent Nix from now on.
+alias nix='nix215'
 
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
