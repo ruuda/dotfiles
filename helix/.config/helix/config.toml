@@ -1,0 +1,6 @@
+theme = "nightfox"
+
+[editor]
+auto-save = true
+rulers = [81, 101]
+text-width = 80
