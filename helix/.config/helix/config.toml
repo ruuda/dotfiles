@@ -4,3 +4,7 @@ theme = "nightfox"
 auto-save = true
 rulers = [81, 101]
 text-width = 80
+
+[keys.normal."\\"]
+w = ":write"
+x = ":write-quit"
