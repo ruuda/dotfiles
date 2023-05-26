@@ -5,6 +5,11 @@ auto-save = true
 rulers = [81, 101]
 text-width = 80
 
+[editor.file-picker]
+# Do not ignore hidden files.
+# (The option is badly named, see https://github.com/helix-editor/helix/issues/6926.)
+hidden = false
+
 [keys.normal."\\"]
 w = ":write"
 x = ":write-quit"
