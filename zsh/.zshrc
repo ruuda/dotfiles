@@ -86,10 +86,11 @@ nix_flags='--extra-experimental-features nix-command --extra-experimental-featur
 # But I do want to use flakes some times too, so add a Nix with flakes as well.
 alias nix210="/nix/store/l0iqmrkw6l78fsixm8l9j6w52372wkhm-nix-2.10.3/bin/nix ${nix_flags}"
 alias nix214="/nix/store/9yyfg6fzhs4sf454q2rf179kp3miy9mg-nix-2.14.1/bin/nix ${nix_flags}"
-alias nix215="/nix/store/sfkx0h38w2mcf1nqab6zvm5nza77fsd9-nix-2.15.0/bin/nix ${nix_flags}"
+alias nix215="/nix/store/q6r9kwmidiy6wx1w1nf3ff0q40sfq4dg-nix-2.15.1/bin/nix ${nix_flags}"
+alias nix216="/nix/store/a3g640wlfhxaqdw0nla62vn0m3fc4q6p-nix-2.16.1/bin/nix ${nix_flags}"
 
 # And default to a recent Nix from now on.
-alias nix='nix215'
+alias nix='nix216'
 
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
