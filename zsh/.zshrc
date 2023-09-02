@@ -141,6 +141,9 @@ function nsh {
 
 # Same but then for using flakes.
 function fsh {
+  devenv_id="$(pwd | b2sum --length 64 | awk '{ print $1 }')-$(basename $PWD)"
+  gcroot="${HOME}/.cache/nix/gcroots/${devenv_id}"
+
   # Build the devShell itself, record its store path.
   shell_storepath=$(nix216 build --keep-env-derivations --no-link --print-out-paths .#devShells.x86_64-linux.default)
 
@@ -151,7 +154,7 @@ function fsh {
   nix216 --offline flake archive --dry-run --json \
     | jq --raw-output '.inputs | .. | .path? | select(. != null)' \
     | xargs --max-procs=1 \
-    nix-store --add-root .nix-devenv --indirect --realise ${shell_storepath} \
+    nix-store --add-root ${gcroot} --indirect --realise ${shell_storepath} \
     > /dev/null
 
   # Finally, enter the development shell itself.
