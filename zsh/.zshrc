@@ -76,6 +76,10 @@ export CDPATH=".:$HOME/repos:$HOME/profile"
 # search path. Unset the one that came with the AUR "nix" package.
 unset NIX_PATH
 
+# I am using multi-user Nix on my systems, but on Arch the daemon is not anymore
+# configured like that by default.
+export NIX_REMOTE='daemon'
+
 # Add a pinned version of Nix 2.3 to the path.
 # Nix 2.4 broke the entire CLI and there is no easy way to avoid it,
 # so stick with 2.3 for most things.
