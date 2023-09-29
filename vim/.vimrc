@@ -174,14 +174,8 @@ let g:vim_markdown_folding_disabled=1
 " =================
 
 if has("gui_running")
-  " Use Consolas at size 12.
-  if has("gui_win32")
-    set guifont=Consolas:h12:cANSI
-  elseif has("gui_gtk2")
-    set guifont=Consolas\ 12
-  elseif has("gui_gtk3")
-    set guifont=Consolas\ 12
-  endif
+  " Use Intel One Mono at size 12.
+  set guifont=Intel\ One\ Mono\ 12
 
   " Needed to make FZF use the color theme.
   set termguicolors
@@ -192,7 +186,7 @@ if has("gui_running")
 
   " Code needs room to breathe, especially if the convention is
   " to use Egyptian brackets. Add more space between the lines.
-  set linespace=7
+  set linespace=2
 
   " Backspace behaves odd in gVim. Fix that.
   set backspace=2
