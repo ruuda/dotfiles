@@ -50,7 +50,7 @@ fzf \
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
 
   # Delete all branches that have been merged into master.
-  gc-branches = !git branch --merged master | egrep -v master | xargs git branch -d
+  gc-branches = !git branch --merged master | grep -v master | xargs git branch -d
 
   # Set upstream to master.
   upmaster = branch --set-upstream-to=master
