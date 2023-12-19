@@ -37,3 +37,6 @@
 [submodule "vim/.vim/bundle/ale"]
 	path = vim/.vim/bundle/ale
 	url = https://github.com/dense-analysis/ale
+[submodule "vim/.vim/bundle/nim.vim"]
+	path = vim/.vim/bundle/nim.vim
+	url = https://github.com/zah/nim.vim
