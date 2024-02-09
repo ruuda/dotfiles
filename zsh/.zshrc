@@ -93,9 +93,10 @@ alias nix214="/nix/store/9yyfg6fzhs4sf454q2rf179kp3miy9mg-nix-2.14.1/bin/nix ${n
 alias nix215="/nix/store/q6r9kwmidiy6wx1w1nf3ff0q40sfq4dg-nix-2.15.1/bin/nix ${nix_flags}"
 alias nix216="/nix/store/a3g640wlfhxaqdw0nla62vn0m3fc4q6p-nix-2.16.1/bin/nix ${nix_flags}"
 alias nix217="/nix/store/3wqasl97rjiza3vd7fxjnvli2w9l30mk-nix-2.17.0/bin/nix ${nix_flags}"
+alias nix220="/nix/store/iwgkck1d64s5f26ngln540hpf06g28py-nix-2.20.1/bin/nix ${nix_flags}"
 
 # And default to a recent Nix from now on.
-alias nix='nix217'
+alias nix='nix220'
 
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
