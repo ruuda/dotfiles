@@ -62,6 +62,12 @@ fzf \
   # passed twice somehow.
   glone = "!glone() { git clone https://github.com/$1; }; glone"
 
+[core]
+  # I still mostly use Vim, but Helix is cool and I will never learn it to a
+  # point where I can be productive if I don't invest more time in it. Commits
+  # are a good place to start.
+  editor = helix
+
 [status]
   # Abbreviate directories of untracked files. I briefly set this to "all", but
   # that is annoying for cache directories that I haven't .gitignored, the
