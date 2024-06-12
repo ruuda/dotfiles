@@ -42,7 +42,7 @@ fzf \
 --delimiter '[● ]+' \
 --nth 3 \
 --preview 'git log --stat --color=always -5 {2}' \
---bind 'enter:execute(echo {3})+abort' \
+--bind 'enter:become(echo {3})' \
 --bind 'ctrl-d:preview(git branch -D {3})')
 
   # When used after a pull, shows all new commits from old to new.
