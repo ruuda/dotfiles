@@ -10,8 +10,10 @@
   "features": {
     "copilot": false
   },
-  "theme": "Ayu Mirage",
+  "theme": "Andromeda",
   "vim_mode": true,
+
+  "wrap_guides": [80, 100],
 
   "ui_font_size": 14,
   "ui_font_family": "Cantarell",
