@@ -17,8 +17,10 @@ Both path should be directories that contain snapshots.
 
 import os
 import os.path
+import subprocess
 import sys
 
+from subprocess import Popen
 from typing import List, Set
 
 
@@ -43,12 +45,43 @@ def sync_one(src_path: str, dst_path: str) -> bool:
     new_snaps = src_snaps - dst_snaps
 
     print(f":: There are {len(new_snaps)} snapshots left to sync.")
+    if len(new_snaps) == 0:
+        return False
 
     # If the snapshots are named with ISO-8601 dates as a prefix, then this
     # ensures that we sync from most recent snapshot to least recent one.
     target = max(new_snaps)
     print(f":: Next target: {target}")
-    return False
+
+    cmd_send = ["btrfs", "send", "--proto=0"]
+
+    clone_sources = src_snaps & dst_snaps
+    for clone_source in clone_sources:
+        cmd_send.append("-c")
+        cmd_send.append(clone_source)
+
+    cmd_send.append(target)
+    cmd_recv = ["btrfs", "receive", dst_path]
+
+    print(f":: Send: {' '.join(cmd_send)}")
+    print(f":: Recv: {' '.join(cmd_recv)}")
+
+    p1 = Popen(cmd_send, cwd=src_path, stdout=subprocess.PIPE)
+    p2 = Popen(["pv"], stdin=p1.stdout, stdout=subprocess.PIPE)
+    p3 = Popen(cmd_recv, cwd=dst_path, stdin=p2.stdout)
+    assert p1.stdout is not None
+    assert p2.stdout is not None
+    p1.stdout.close()
+    p2.stdout.close()
+
+    p1.wait()
+    p2.wait()
+    p3.wait()
+    assert p1.returncode == 0
+    assert p2.returncode == 0
+    assert p3.returncode == 0
+
+    return True
 
 
 def main(src_path: str, dst_path: str) -> None:
