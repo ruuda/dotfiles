@@ -49,8 +49,13 @@ def sync_one(src_path: str, dst_path: str) -> bool:
         return False
 
     # If the snapshots are named with ISO-8601 dates as a prefix, then this
-    # ensures that we sync from most recent snapshot to least recent one.
-    target = max(new_snaps)
+    # ensures that we sync from least recent snapshot to most recent one.
+    # For fragmentation reasons it may make sense to go the other way around,
+    # but this triggers btrfs bugs, if we have snapshots at T1, T2, T3, at the
+    # source, and T1 at the destination, and we copy T3, and then we want to
+    # copy T2 using {T1, T2} as the clone sources, then the receive fails.
+    # (At least, this is my hypothesis, I haven't contructed a minimal repro.)
+    target = min(new_snaps)
     print(f":: Next target: {target}")
 
     cmd_send = ["btrfs", "send", "--proto=0"]
