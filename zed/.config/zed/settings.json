@@ -34,5 +34,14 @@
   "telemetry": {
     "diagnostics": false,
     "metrics": false
+  },
+
+  "languages": {
+    "Python": {
+      // Disable stuff that runs untrusted javascript outside of a browser, and
+      // creates weird .ropeproject directories that I never consented to.
+      // See also https://github.com/zed-industries/zed/discussions/21163#discussioncomment-11373808.
+      "language_servers": ["!pylsp"]
+    }
   }
 }
