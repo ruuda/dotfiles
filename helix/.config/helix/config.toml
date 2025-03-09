@@ -13,3 +13,12 @@ hidden = false
 [keys.normal."\\"]
 w = ":write"
 x = ":write-quit"
+
+# Helix already has `<space>f` for the file picker, but in Vim I use `\f`, so
+# this makes the two more uniform.
+f = "file_picker"
+
+# In Vim, reflow is `gq`. We could do the same in Helix, but `\` is easier to
+# type than, and `r` makes more sense anyway, so I'm going for `\r`, and I'll
+# map the same in Vim.
+r = ":reflow"

@@ -149,7 +149,10 @@ noremap <Leader>p "+p
 noremap <Leader>P "+P
 
 " Find all references through a language server.
-noremap <Leader>r :ALEFindReferences<Return>
+noremap <Leader>R :ALEFindReferences<Return>
+
+" Leader + r reflows the text. I set up the same binding in Helix.
+noremap <Leader>r gq
 
 " Make (b for 'build', as having the leader and next key on alternating hands
 " is nicer).
