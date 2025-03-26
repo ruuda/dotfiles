@@ -1,7 +1,13 @@
-# Keep history for 50000 commands.
+# Keep history for 100,000 commands. In the past I used 50,000 which was fine,
+# but that was only ~1.3 MB, we can easily store more. Allow 100 entries of
+# headroom more in memory than on disk to allow hist_expire_dups_first to be
+# useful.
 HISTFILE=~/.histfile
-HISTSIZE=50000
-SAVEHIST=50000
+HISTSIZE=100100
+SAVEHIST=100000
+
+# Record command start timestamp and duration.
+setopt extended_history
 
 # Do not put duplicate entries in the history. What is the point of pressing the
 # up arrow thirty times and nothing happens?
@@ -12,7 +18,11 @@ setopt hist_ignore_space
 
 # Write history immediately instead of at exit. This ensures that history is not
 # lost even when the shell is not properly terminated.
-setopt inc_append_history
+setopt inc_append_history_time
+
+# As the name implies, when we need to expire entries from the history, expire
+# duplicates before expiring unique entries.
+setopt hist_expire_dups_first
 
 # Change dir automatically without the cd command.
 setopt autocd
