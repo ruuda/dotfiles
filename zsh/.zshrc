@@ -113,7 +113,7 @@ alias nix='nix224'
 # spaces. Furthermore, list directories before files.
 alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
 alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
+alias egrep='grep --color=auto --extended-regexp'
 
 # MPV with loudness normalization, for watching movies or series without having
 # to turn up the volume if there’s a conversation and then having to turn it
