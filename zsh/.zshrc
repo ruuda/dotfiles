@@ -115,6 +115,9 @@ alias ls='ls --color=auto --quoting-style=literal --group-directories-first'
 alias grep='grep --color=auto'
 alias egrep='grep --color=auto --extended-regexp'
 
+# I use Helix often enough that a shorthand is productive.
+alias hx=helix
+
 # MPV with loudness normalization, for watching movies or series without having
 # to turn up the volume if there’s a conversation and then having to turn it
 # down when there’s an explosion. We add a compressor with 40ms attack and 3s
