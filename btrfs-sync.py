@@ -21,7 +21,7 @@ import subprocess
 import sys
 
 from subprocess import Popen
-from typing import List, Set
+from typing import Set
 
 
 def list_snapshots(path: str) -> Set[str]:
