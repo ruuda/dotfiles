@@ -22,3 +22,11 @@ f = "file_picker"
 # type than, and `r` makes more sense anyway, so I'm going for `\r`, and I'll
 # map the same in Vim.
 r = ":reflow"
+
+[keys.insert]
+# Make Ctrl+N trigger completion, like it does in Vim. But then when completion
+# opens because we triggered it, the first entry is not always highlighted.
+# Unfortunately we can't currently trigger selecting the first entry by mapping
+# it to another Ctrl+N, as there is no mappable command for the autocomplete
+# menu.
+C-n = "completion"
