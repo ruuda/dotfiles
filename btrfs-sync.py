@@ -61,7 +61,7 @@ def sync_one(src_path: str, dst_path: str) -> bool:
     cmd_send = ["btrfs", "send", "--proto=0"]
 
     clone_sources = src_snaps & dst_snaps
-    for clone_source in clone_sources:
+    for clone_source in sorted(clone_sources):
         cmd_send.append("-c")
         cmd_send.append(clone_source)
 
