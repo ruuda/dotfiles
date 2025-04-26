@@ -1,0 +1,24 @@
+use-grammars = { except = ["gemini"] }
+
+[[language]]
+name = "rcl"
+auto-format = false
+file-types = ["rcl"]
+formatter = { command = "rcl", args = ["format", "-"] }
+indent = { tab-width = 2, unit = "  " }
+roots = ["build.rcl"]
+scope = "source.rcl"
+grammar = "rcl"
+
+[[grammar]]
+name = "rcl"
+#source = { git = "/home/ruud/repos/rcl", rev = "tree-sitter", subpath = "grammar/tree-sitter-rcl" }
+source = { path = "/home/ruud/repos/rcl/grammar/tree-sitter-rcl" }
+
+[[language]]
+name = "ledger"
+auto-format = false
+file-types = [{ glob = "finance/*.dat" }]
+indent = { tab-width = 2, unit = "  " }
+text-width = 64
+rulers = [65]
