@@ -1,0 +1,4 @@
+# Do not implicitly delete any files, I often use old toolchains and I don't
+# want them to rebuild or re-download things.
+[gc.auto]
+frequency = "never"
