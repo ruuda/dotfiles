@@ -2,3 +2,6 @@
 # want them to rebuild or re-download things.
 [gc.auto]
 frequency = "never"
+
+[cache]
+auto-clean-frequency = "never"
