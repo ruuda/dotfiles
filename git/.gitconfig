@@ -1,7 +1,7 @@
 [user]
   name = Ruud van Asseldonk
   email = dev@veniogames.com
-  signingkey = 0599697D
+  signingkey = 284FE5A783926532
 
 [alias]
   # When checking something out, if that causes submodules to be at a different
