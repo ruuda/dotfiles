@@ -7,12 +7,17 @@
 # related neighbouring rights to this software to the public domain worldwide.
 # See the CC0 dedication at https://creativecommons.org/publicdomain/zero/1.0/.
 
+from __future__ import annotations
+
+import random
 import statistics
+import time
 
 import asyncio
 import aiohttp  # Tested with 3.12.15
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
+from aiohttp.client_exceptions import ClientError
 
 from typing import Dict, Iterable, Literal, List, NamedTuple, Set
 from datetime import datetime, timedelta, timezone
@@ -23,6 +28,9 @@ class Mirror(NamedTuple):
     """
     The fields here map directly to those documented at
     <https://archlinux.org/mirrors/status/>.
+
+    Aside from those, we add a few mutable list fields that record statistics
+    about the mirror.
     """
 
     active: bool
@@ -82,6 +90,50 @@ class Mirror(NamedTuple):
         return urlparse(self.url).hostname
 
 
+class MirrorStats(NamedTuple):
+    """
+    A mirror, together with mutable statistics about it.
+    """
+
+    mirror: Mirror
+
+    # Observations of how long it took to fetch the `lastsync` file, in seconds.
+    lastsync_secs: List[float]
+
+    # Errors observed while measuring.
+    errors: List[ClientError]
+
+    @staticmethod
+    def new(mirror: Mirror) -> MirrorStats:
+        return MirrorStats(
+            mirror,
+            lastsync_secs=[],
+            errors=[],
+        )
+
+    def min_lastsync_secs(self) -> float:
+        """Return the minimum observed lastsync fetch time."""
+        return min(self.lastsync_secs)
+
+    def mid_lastsync_secs(self) -> float:
+        """Return the median observed lastsync fetch time."""
+        return statistics.quantiles(self.lastsync_secs, n=2)[0]
+
+    async def fetch_lastsync_secs(self, http: ClientSession) -> None:
+        """
+        Fetch the `lastsync` file, and record how long that took in the stats.
+        """
+        t0 = time.monotonic()
+        try:
+            async with http.get(self.mirror.url + "lastsync") as r:
+                _timestamp = await r.text()
+                t1 = time.monotonic()
+                self.lastsync_secs.append(t1 - t0)
+
+        except ClientError as exc:
+            self.errors.append(exc)
+
+
 async def get_mirrors(http: ClientSession) -> List[Mirror]:
     async with http.get("https://archlinux.org/mirrors/status/json/") as r:
         data = await r.json()
@@ -101,28 +153,94 @@ def filter_mirrors(mirrors: List[Mirror]) -> List[Mirror]:
     return mirrors
 
 
+async def fetch_lastsync_once(http: ClientSession, mirrors: List[MirrorStats]) -> None:
+    """
+    For a group of mirrors in parallel, measure how long it takes to "ping"
+    them, by fetching the lastsync file, once for every mirror.
+    """
+    async with asyncio.TaskGroup() as tg:
+        for m in mirrors:
+            tg.create_task(m.fetch_lastsync_secs(http))
+
+
 async def main() -> None:
-    async with aiohttp.ClientSession() as http:
-        mirrors = filter_mirrors(await get_mirrors(http))
+    timeout = aiohttp.ClientTimeout(
+        # Timeouts are in seconds.
+        sock_connect=3.0,
+        sock_read=5.0,
+    )
+    connector = aiohttp.TCPConnector(
+        # Cache DNS lookups forever; we want to measure the speed of the mirror,
+        # not of our DNS server.
+        use_dns_cache=True,
+        ttl_dns_cache=None,
+        # Do not limit the total number of open connections on this client.
+        # We want to keep connections open to all hosts. Per host though, we
+        # only make one concurrent request.
+        limit=0,
+        limit_per_host=1,
+    )
 
-    print(f"Found {len(mirrors)} mirrors, pinging.")
+    async with aiohttp.ClientSession(connector=connector, timeout=timeout) as http:
+        mirrors = [MirrorStats.new(m) for m in filter_mirrors(await get_mirrors(http))]
 
-    # First we try to ping every host twice, and then we throw away the slowest
-    # half, and all the ones that don't respond to ping. We judge mirrors by
-    # their minimum ping at this point, because the slow one may be an outlier.
-    # Send one ping every 300ms, because we are pinging many hosts, and if we
-    # make a burst, then all of the later ones don't arrive, probably my ISP
-    # is doing some rate limiting?
-    hostnames = [m.hostname() for m in mirrors]
-    host_ping_ms: Dict[str, float] = {}
-    host_mirror: Dict[str, Mirror] = {}
-    for host, p_ms in host_ping_ms.items():
-        m = host_mirror[host]
-        print(
-            f"{m.country_code} delay={m.delay} dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f}",
-            host,
-            p_ms,
-        )
+        # For each mirror, try to fetch the `lastsync` file, and measure how
+        # long that took. This measurement is not yet that interesting though,
+        # because it includes the TLS handshake, so we do this primarily to
+        # establish all connections. Then we fetch again, to get a better sense
+        # of how long it really takes.
+        sleep_secs = 0.1
+        print("Measuring initial fetch ...")
+        await fetch_lastsync_once(http, mirrors)
+
+        for _ in range(2):
+            random.shuffle(mirrors)
+            await asyncio.sleep(sleep_secs)
+            await fetch_lastsync_once(http, mirrors)
+
+        # Keep the top 25 fastests mirrors, based on the fastest samples.
+        # At this point we are looking for _potential_, and not interested in
+        # outliers.
+        mirrors.sort(key=lambda m: m.min_lastsync_secs())
+        for m in mirrors:
+            mm = m.mirror
+            print(
+                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
+                m.lastsync_secs,
+            )
+
+        mirrors = mirrors[:25]
+
+        # For the top candidates, refine the stats with a few more requests.
+        print("Measuring more fetch times ...")
+        for _ in range(4):
+            random.shuffle(mirrors)
+            await asyncio.sleep(sleep_secs)
+            await fetch_lastsync_once(http, mirrors)
+
+        mirrors.sort(key=lambda m: m.mid_lastsync_secs())
+        for m in mirrors:
+            mm = m.mirror
+            print(
+                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
+                m.lastsync_secs,
+            )
+
+        # And for the top 15 we add a few more data points, to be sure.
+        mirrors = mirrors[:15]
+        print("Measuring more fetch times ...")
+        for _ in range(4):
+            random.shuffle(mirrors)
+            await asyncio.sleep(sleep_secs)
+            await fetch_lastsync_once(http, mirrors)
+
+        mirrors.sort(key=lambda m: m.mid_lastsync_secs())
+        for m in mirrors:
+            mm = m.mirror
+            print(
+                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
+                m.lastsync_secs,
+            )
 
 
 if __name__ == "__main__":
