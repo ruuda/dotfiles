@@ -87,7 +87,9 @@ class Mirror(NamedTuple):
         return (self.delay < 3600) and (dt < timedelta(minutes=90))
 
     def hostname(self) -> str:
-        return urlparse(self.url).hostname
+        h = urlparse(self.url).hostname
+        assert h is not None, "Mirrors urls must have a hostname"
+        return h
 
 
 class MirrorStats(NamedTuple):
@@ -100,6 +102,9 @@ class MirrorStats(NamedTuple):
     # Observations of how long it took to fetch the `lastsync` file, in seconds.
     lastsync_secs: List[float]
 
+    # Observations of with how many bytes per second we could fetch files.
+    rate_bps: List[float]
+
     # Errors observed while measuring.
     errors: List[ClientError]
 
@@ -108,6 +113,7 @@ class MirrorStats(NamedTuple):
         return MirrorStats(
             mirror,
             lastsync_secs=[],
+            rate_bps=[],
             errors=[],
         )
 
@@ -119,7 +125,7 @@ class MirrorStats(NamedTuple):
         """Return the median observed lastsync fetch time."""
         return statistics.quantiles(self.lastsync_secs, n=2)[0]
 
-    async def fetch_lastsync_secs(self, http: ClientSession) -> None:
+    async def fetch_lastsync(self, http: ClientSession) -> None:
         """
         Fetch the `lastsync` file, and record how long that took in the stats.
         """
@@ -132,6 +138,39 @@ class MirrorStats(NamedTuple):
 
         except ClientError as exc:
             self.errors.append(exc)
+
+    async def _fetch_file(self, http: ClientSession, url: str) -> None:
+        """
+        Fetch the file, and record how long that took in the stats.
+        """
+        t0 = time.monotonic()
+        try:
+            async with http.get(self.mirror.url + "core/os/x86_64/") as r:
+                data = await r.read()
+                r.raise_for_status()
+
+                t1 = time.monotonic()
+                rate_bps = len(data) / (t1 - t0)
+
+                # The core.db is about 120 kB in size; if it's very small, then
+                # something went wrong, and we should skip this measurement.
+                # However, if we don't put in anything, we may get zero data
+                # points. So still count it, but at only 5% speed.
+                if len(data) < 10_000:
+                    self.rate_bps.append(rate_bps * 0.05)
+                else:
+                    self.rate_bps.append(rate_bps)
+
+        except ClientError as exc:
+            self.errors.append(exc)
+
+    async def fetch_small_file(self, http: ClientSession) -> None:
+        """Fetch `core.db` (about 120 kB) and record the throughput."""
+        await self._fetch_file(http, self.mirror.url + "core/os/x86_64/core.db")
+
+    async def fetch_large_file(self, http: ClientSession) -> None:
+        """Fetch `core.files` (about 1.4 MB) and record the throughput."""
+        await self._fetch_file(http, self.mirror.url + "core/os/x86_64/core.files")
 
 
 async def get_mirrors(http: ClientSession) -> List[Mirror]:
@@ -160,7 +199,7 @@ async def fetch_lastsync_once(http: ClientSession, mirrors: List[MirrorStats]) -
     """
     async with asyncio.TaskGroup() as tg:
         for m in mirrors:
-            tg.create_task(m.fetch_lastsync_secs(http))
+            tg.create_task(m.fetch_lastsync(http))
 
 
 async def fetch_lastsync_many(
@@ -224,7 +263,7 @@ async def main() -> None:
 
         # For the top candidates, refine the stats with a few more requests.
         print("Measuring more fetch times ...")
-        await fetch_lastsync_many(http, mirrors, 4)
+        await fetch_lastsync_many(http, mirrors, 5)
 
         mirrors.sort(key=lambda m: m.mid_lastsync_secs())
         for m in mirrors:
@@ -236,17 +275,57 @@ async def main() -> None:
 
         # And for the top 15 we add a few more data points, to be sure.
         mirrors = mirrors[:15]
-        print("Measuring more fetch times ...")
-        await fetch_lastsync_many(http, mirrors, 4)
+        print("Measuring small file fetch times ...")
 
-        mirrors.sort(key=lambda m: m.mid_lastsync_secs())
+        # Now we start fetching the core.db files. This we do sequentially,
+        # because now we are measuring throughput, and if we run too much in
+        # parallel, we saturate our connection.
+        for _ in range(2):
+            for m in mirrors:
+                await m.fetch_small_file(http)
+
+        mirrors.sort(key=lambda m: max(m.rate_bps), reverse=True)
         for m in mirrors:
             mm = m.mirror
             print(
                 f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.lastsync_secs,
+                m.rate_bps,
             )
 
+        # Throw away the slowest 5, and do a few more passes. Only at this point,
+        # the congestion control limits start to widen, and the later fetches are
+        # generally faster than the initial ones.
+        print("Measuring large file fetch times ...")
+        mirrors = mirrors[:10]
+        for _ in range(3):
+            for m in mirrors:
+                await m.fetch_large_file(http)
+
+        mirrors.sort(key=lambda m: sum(m.rate_bps), reverse=True)
+        for m in mirrors:
+            mm = m.mirror
+            print(
+                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
+                m.rate_bps,
+            )
+
+        print("Measuring large file fetch times, final ...")
+        mirrors = mirrors[:5]
+        for _ in range(3):
+            for m in mirrors:
+                await m.fetch_large_file(http)
+
+        mirrors.sort(key=lambda m: sum(m.rate_bps), reverse=True)
+        for m in mirrors:
+            mm = m.mirror
+            print(
+                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
+                m.rate_bps,
+            )
+
+        # TODO: Could do a priority queue ordered on the upper bound of a
+        # confidence interval for the throughput. Then explore/exploit would
+        # test the right hosts in order.
 
 if __name__ == "__main__":
     asyncio.run(main())
