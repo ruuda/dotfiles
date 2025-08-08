@@ -7,12 +7,14 @@
 # related neighbouring rights to this software to the public domain worldwide.
 # See the CC0 dedication at https://creativecommons.org/publicdomain/zero/1.0/.
 
-import json
-import subprocess
 import statistics
 
+import asyncio
+import aiohttp  # Tested with 3.12.15
+
+from aiohttp import ClientSession
+
 from typing import Dict, Iterable, Literal, List, NamedTuple, Set
-from http.client import HTTPSConnection
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
@@ -80,15 +82,10 @@ class Mirror(NamedTuple):
         return urlparse(self.url).hostname
 
 
-def get_mirrors() -> List[Mirror]:
-    timeout_seconds = 3.0
-    host = "archlinux.org"
-    conn = HTTPSConnection(host, timeout=timeout_seconds)
-    conn.request("GET", "/mirrors/status/json/", headers={"Host": host})
-    response = conn.getresponse()
-    assert response.status == 200
-    data = json.load(response)
-    return [Mirror(**mirror) for mirror in data["urls"]]
+async def get_mirrors(http: ClientSession) -> List[Mirror]:
+    async with http.get("https://archlinux.org/mirrors/status/json/") as r:
+        data = await r.json()
+        return [Mirror(**mirror) for mirror in data["urls"]]
 
 
 def filter_mirrors(mirrors: List[Mirror]) -> List[Mirror]:
@@ -104,45 +101,9 @@ def filter_mirrors(mirrors: List[Mirror]) -> List[Mirror]:
     return mirrors
 
 
-def ping_hosts_ms(
-    hostnames: List[str],
-    *,
-    n_pings: int,
-    period_ms: int,
-    interval_ms: int,
-) -> Iterable[List[float]]:
-    """
-    Send `n_pings` pings to each of the hosts, and return the timings in
-    milliseconds. This requires `fping` to be installed.
-    - `period_ms`: The minimum time between pinging the same host, in ms.
-    - `interval_ms`: The minimum time between pinging any two hosts, in ms.
-    With fping's default interval of 10ms, when pinging many hosts, we observe
-    a high amount of packet loss, maybe the ISP is doing some limiting.
-    """
-    # fmt:off
-    cmd = [
-        "fping",
-        # "--quiet",
-        # Print statistics every 2s. (Yes, this argument is in seconds, while
-        # the others are in milliseconds.)
-        "--vcount", str(n_pings),
-        "--interval", str(interval_ms),
-        "--period", str(period_ms),
-        *hostnames
-    ]
-    # fmt:on
-    # fping prints ongoing stats to stdout, unless we --quiet it, and then the
-    # parseable summary to stderr.
-    proc = subprocess.run(cmd, encoding="utf-8", stderr=subprocess.PIPE)
-    for line in proc.stderr.splitlines():
-        if " : " in line:
-            _hostname, more = line.split(" : ", maxsplit=1)
-            times_ms = more.split(" ")
-            yield [float(dt) for dt in times_ms if dt != "-"]
-
-
-def main() -> None:
-    mirrors = filter_mirrors(get_mirrors())
+async def main() -> None:
+    async with aiohttp.ClientSession() as http:
+        mirrors = filter_mirrors(await get_mirrors(http))
 
     print(f"Found {len(mirrors)} mirrors, pinging.")
 
@@ -155,41 +116,6 @@ def main() -> None:
     hostnames = [m.hostname() for m in mirrors]
     host_ping_ms: Dict[str, float] = {}
     host_mirror: Dict[str, Mirror] = {}
-    for mirror, host, p_ms in zip(
-        mirrors,
-        hostnames,
-        ping_hosts_ms(hostnames, n_pings=2, interval_ms=300, period_ms=500),
-    ):
-        if len(p_ms) > 0:
-            host_ping_ms[host] = min(p_ms)
-            host_mirror[host] = mirror
-
-    for host, p_ms in host_ping_ms.items():
-        m = host_mirror[host]
-        print(
-            f"{m.country_code} delay={m.delay} dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f}",
-            host,
-            p_ms,
-        )
-
-    # We take the 15 fastest hosts for further inspection.
-    fastest_hosts = sorted((p_ms, host) for host, p_ms in host_ping_ms.items())[:15]
-    for p_ms, h in fastest_hosts:
-        print(f"{p_ms:.3f} {h}")
-
-    # We ping the fastest 10 hosts a few more times. This time, we take the p80
-    # as an indication of its performance, because worst case affects the
-    # transfer speed more than the happy case.
-    hostnames = [host for _p_ms, host in fastest_hosts[:10]]
-    host_ping_ms: Dict[str, float] = {}
-    for host, p_ms in zip(
-        hostnames, ping_hosts_ms(hostnames, n_pings=20, interval_ms=75, period_ms=1000)
-    ):
-        if len(p_ms) >= 5:
-            host_ping_ms[host] = statistics.quantiles(p_ms, n=5)[3]
-
-    # TODO: Persist these top-k hosts so we can reuse the stats between
-    # different runs of the program.
     for host, p_ms in host_ping_ms.items():
         m = host_mirror[host]
         print(
@@ -200,4 +126,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
