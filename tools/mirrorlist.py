@@ -8,10 +8,12 @@
 # See the CC0 dedication at https://creativecommons.org/publicdomain/zero/1.0/.
 
 import json
+import subprocess
 
-from typing import Literal, List, NamedTuple, Set
+from typing import Iterable, Literal, List, NamedTuple, Set
 from http.client import HTTPSConnection
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 
 class Mirror(NamedTuple):
@@ -73,6 +75,9 @@ class Mirror(NamedTuple):
         # average, but synced longer than 1.5h ago currently!
         return (self.delay < 3600) and (dt < timedelta(minutes=90))
 
+    def hostname(self) -> str:
+        return urlparse(self.url).hostname
+
 
 def get_mirrors() -> List[Mirror]:
     timeout_seconds = 3.0
@@ -98,10 +103,57 @@ def filter_mirrors(mirrors: List[Mirror]) -> List[Mirror]:
     return mirrors
 
 
+def ping_hosts_ms(
+    hostnames: List[str],
+    *,
+    n_pings: int,
+    period_ms: int,
+    interval_ms: int,
+) -> Iterable[List[float]]:
+    """
+    Send `n_pings` pings to each of the hosts, and return the timings in
+    milliseconds. This requires `fping` to be installed.
+    - `period_ms`: The minimum time between pinging the same host, in ms.
+    - `interval_ms`: The minimum time between pinging any two hosts, in ms.
+    With fping's default interval of 10ms, when pinging many hosts, we observe
+    a high amount of packet loss, maybe the ISP is doing some limiting.
+    """
+    # fmt:off
+    cmd = [
+        "fping",
+        # "--quiet",
+        # Print statistics every 2s. (Yes, this argument is in seconds, while
+        # the others are in milliseconds.)
+        "--vcount", str(n_pings),
+        "--interval", str(interval_ms),
+        "--period", str(period_ms),
+        *hostnames
+    ]
+    # fmt:on
+    # fping prints ongoing stats to stdout, unless we --quiet it, and then the
+    # parseable summary to stderr.
+    proc = subprocess.run(cmd, encoding="utf-8", stderr=subprocess.PIPE)
+    for line in proc.stderr.splitlines():
+        if " : " in line:
+            _hostname, more = line.split(" : ", maxsplit=1)
+            times_ms = more.split(" ")
+            yield [float(dt) for dt in times_ms if dt != "-"]
+
+
 def main() -> None:
     mirrors = filter_mirrors(get_mirrors())
-    for m in mirrors:
-        print(m)
+
+    print(f"Found {len(mirrors)} mirrors, pinging.")
+
+    hostnames = [m.hostname() for m in mirrors]
+    pings_ms = list(ping_hosts_ms(hostnames, n_pings=2, interval_ms=300, period_ms=100))
+
+    for h, p, m in zip(hostnames, pings_ms, mirrors):
+        print(
+            f"{m.country_code} delay={m.delay} dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f}",
+            h,
+            p,
+        )
 
 
 if __name__ == "__main__":
