@@ -9,8 +9,9 @@
 
 import json
 import subprocess
+import statistics
 
-from typing import Iterable, Literal, List, NamedTuple, Set
+from typing import Dict, Iterable, Literal, List, NamedTuple, Set
 from http.client import HTTPSConnection
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
@@ -145,14 +146,56 @@ def main() -> None:
 
     print(f"Found {len(mirrors)} mirrors, pinging.")
 
+    # First we try to ping every host twice, and then we throw away the slowest
+    # half, and all the ones that don't respond to ping. We judge mirrors by
+    # their minimum ping at this point, because the slow one may be an outlier.
+    # Send one ping every 300ms, because we are pinging many hosts, and if we
+    # make a burst, then all of the later ones don't arrive, probably my ISP
+    # is doing some rate limiting?
     hostnames = [m.hostname() for m in mirrors]
-    pings_ms = list(ping_hosts_ms(hostnames, n_pings=2, interval_ms=300, period_ms=100))
+    host_ping_ms: Dict[str, float] = {}
+    host_mirror: Dict[str, Mirror] = {}
+    for mirror, host, p_ms in zip(
+        mirrors,
+        hostnames,
+        ping_hosts_ms(hostnames, n_pings=2, interval_ms=300, period_ms=500),
+    ):
+        if len(p_ms) > 0:
+            host_ping_ms[host] = min(p_ms)
+            host_mirror[host] = mirror
 
-    for h, p, m in zip(hostnames, pings_ms, mirrors):
+    for host, p_ms in host_ping_ms.items():
+        m = host_mirror[host]
         print(
             f"{m.country_code} delay={m.delay} dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f}",
-            h,
-            p,
+            host,
+            p_ms,
+        )
+
+    # We take the 15 fastest hosts for further inspection.
+    fastest_hosts = sorted((p_ms, host) for host, p_ms in host_ping_ms.items())[:15]
+    for p_ms, h in fastest_hosts:
+        print(f"{p_ms:.3f} {h}")
+
+    # We ping the fastest 10 hosts a few more times. This time, we take the p80
+    # as an indication of its performance, because worst case affects the
+    # transfer speed more than the happy case.
+    hostnames = [host for _p_ms, host in fastest_hosts[:10]]
+    host_ping_ms: Dict[str, float] = {}
+    for host, p_ms in zip(
+        hostnames, ping_hosts_ms(hostnames, n_pings=20, interval_ms=75, period_ms=1000)
+    ):
+        if len(p_ms) >= 5:
+            host_ping_ms[host] = statistics.quantiles(p_ms, n=5)[3]
+
+    # TODO: Persist these top-k hosts so we can reuse the stats between
+    # different runs of the program.
+    for host, p_ms in host_ping_ms.items():
+        m = host_mirror[host]
+        print(
+            f"{m.country_code} delay={m.delay} dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f}",
+            host,
+            p_ms,
         )
 
 
