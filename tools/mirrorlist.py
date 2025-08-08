@@ -163,6 +163,21 @@ async def fetch_lastsync_once(http: ClientSession, mirrors: List[MirrorStats]) -
             tg.create_task(m.fetch_lastsync_secs(http))
 
 
+async def fetch_lastsync_many(
+    http: ClientSession, mirrors: List[MirrorStats], n: int
+) -> None:
+    """
+    Fetch the lastsync file `n` times per mirror, and record the durations. We
+    sleep a bit in between to not hammer the servers too much, and we shuffle
+    the list to even out the effects of request order, if there is any.
+    """
+    sleep_seconds = 0.1
+    for _ in range(n):
+        random.shuffle(mirrors)
+        await asyncio.sleep(sleep_seconds)
+        await fetch_lastsync_once(http, mirrors)
+
+
 async def main() -> None:
     timeout = aiohttp.ClientTimeout(
         # Timeouts are in seconds.
@@ -192,11 +207,7 @@ async def main() -> None:
         sleep_secs = 0.1
         print("Measuring initial fetch ...")
         await fetch_lastsync_once(http, mirrors)
-
-        for _ in range(2):
-            random.shuffle(mirrors)
-            await asyncio.sleep(sleep_secs)
-            await fetch_lastsync_once(http, mirrors)
+        await fetch_lastsync_many(http, mirrors, 2)
 
         # Keep the top 25 fastests mirrors, based on the fastest samples.
         # At this point we are looking for _potential_, and not interested in
@@ -213,10 +224,7 @@ async def main() -> None:
 
         # For the top candidates, refine the stats with a few more requests.
         print("Measuring more fetch times ...")
-        for _ in range(4):
-            random.shuffle(mirrors)
-            await asyncio.sleep(sleep_secs)
-            await fetch_lastsync_once(http, mirrors)
+        await fetch_lastsync_many(http, mirrors, 4)
 
         mirrors.sort(key=lambda m: m.mid_lastsync_secs())
         for m in mirrors:
@@ -229,10 +237,7 @@ async def main() -> None:
         # And for the top 15 we add a few more data points, to be sure.
         mirrors = mirrors[:15]
         print("Measuring more fetch times ...")
-        for _ in range(4):
-            random.shuffle(mirrors)
-            await asyncio.sleep(sleep_secs)
-            await fetch_lastsync_once(http, mirrors)
+        await fetch_lastsync_many(http, mirrors, 4)
 
         mirrors.sort(key=lambda m: m.mid_lastsync_secs())
         for m in mirrors:
