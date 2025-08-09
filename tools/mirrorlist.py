@@ -327,5 +327,11 @@ async def main() -> None:
         # confidence interval for the throughput. Then explore/exploit would
         # test the right hosts in order.
 
+        print()
+        for m in mirrors:
+            rate_mbps = sum(m.rate_bps) / len(m.rate_bps) / 1e6
+            print(f"# {rate_mbps:.1f} MB/s")
+            print(f"Server = {m.mirror.url}$repo/os/$arch")
+
 if __name__ == "__main__":
     asyncio.run(main())
