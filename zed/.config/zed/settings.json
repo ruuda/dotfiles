@@ -2,7 +2,7 @@
   // Turn off AI stuff that I don't need.
   "disable_ai": true,
 
-  "theme": "Gruvbox Dark",
+  "theme": "One Dark",
   "vim_mode": true,
 
   "wrap_guides": [80, 100],
