@@ -151,7 +151,7 @@ class MirrorStats:
             xs = []
             ys = []
             for x, dt in zip(self.lens, self.dt_secs):
-                if x > 100:
+                if x > 1_000:
                     xs.append(x)
                     ys.append(dt - latency)
 
@@ -173,18 +173,18 @@ class MirrorStats:
         diffs = [(dx / dt) - rate for dx, dt in zip(self.lens, self.dt_secs)]
         variance = sum(d * d for d in diffs) / (len(diffs) - 1)
         self.rate_bps_upper = (
-            rate + math.sqrt(variance) / len(diffs) + (100e6 / (len(diffs) ** 2))
+            rate + math.sqrt(variance) / len(diffs) + (100e6 / len(diffs))
         )
 
     def __str__(self):
         m = self.mirror
         latency_ms = self.latency_secs * 1000.0
-        rate_kbps = self.rate_bps / 1e3
-        rate_kbps_upper = self.rate_bps_upper / 1e3
+        rate_mbps = self.rate_bps / 1e6
+        rate_mbps_upper = self.rate_bps_upper / 1e6
         return (
             f"{m.country_code} delay={m.delay:>4} "
             f"dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f} "
-            f"latency={latency_ms:.1f} kbps={rate_kbps:.2f}..{rate_kbps_upper:.2f} "
+            f"latency={latency_ms:.1f} mbps={rate_mbps:.2f}..{rate_mbps_upper:.2f} "
             f"n={len(self.dt_secs)} {m.hostname()}"
         )
 
@@ -302,19 +302,25 @@ async def main() -> None:
         queue = [(-m.rate_bps_upper, m) for m in mirrors[:20]]
         heapq.heapify(queue)
 
-        for round in range(20):
-            print(f"Round {round}")
-            candidates = []
-            for k in range(5):
-                _prio, m = heapq.heappop(queue)
-                candidates.append(m)
+        for kind in ["medium", "large"]:
+            for round in range(10):
+                print(f"Round {round}")
+                candidates = []
+                for k in range(5):
+                    _prio, m = heapq.heappop(queue)
+                    candidates.append(m)
 
-            for m in candidates:
-                kind = "medium" if len(m.dt_secs) <= 12 else "large"
-                await m.fetch_file(http, kind)
-                m.refresh_stats()
-                heapq.heappush(queue, (-m.rate_bps_upper, m))
-                print(m)
+                for m in candidates:
+                    await m.fetch_file(http, kind)
+                    m.refresh_stats()
+                    heapq.heappush(queue, (-m.rate_bps_upper, m))
+                    print(m)
+
+        with open("mirrors.tsv", "w", encoding="utf-8") as f:
+            f.write("host\tlen\tdt_secs\n")
+            for _, m in queue:
+                for dx, dt in zip(m.lens, m.dt_secs):
+                    f.write(f"{m.mirror.hostname()}\t{dx}\t{dt:.5f}\n")
 
         return False
 
