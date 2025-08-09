@@ -12,6 +12,7 @@ from __future__ import annotations
 import random
 import statistics
 import time
+import math
 
 import asyncio
 import aiohttp  # Tested with 3.12.15
@@ -92,52 +93,82 @@ class Mirror(NamedTuple):
         return h
 
 
-class MirrorStats(NamedTuple):
+class Point(NamedTuple):
+    """
+    A measurement of retrieving a file from a server.
+    """
+
+    # Number of body bytes transferred.
+    len: int
+
+    # Duration in seconds.
+    dt_sec: float
+
+
+class MirrorStats:
     """
     A mirror, together with mutable statistics about it.
     """
 
-    mirror: Mirror
+    def __init__(self, mirror: Mirror) -> None:
+        self.mirror = mirror
 
-    # Observations of how long it took to fetch the `lastsync` file, in seconds.
-    lastsync_secs: List[float]
+        # Response body sizes in bytes.
+        self.lens: List[int] = []
 
-    # Observations of with how many bytes per second we could fetch files.
-    rate_bps: List[float]
+        # Request durations in seconds.
+        self.dt_secs: List[float] = []
 
-    # Errors observed while measuring.
-    errors: List[ClientError]
+        # Errors observed while measuring.
+        self.errors: List[ClientError] = []
 
-    @staticmethod
-    def new(mirror: Mirror) -> MirrorStats:
-        return MirrorStats(
-            mirror,
-            lastsync_secs=[],
-            rate_bps=[],
-            errors=[],
-        )
+        # Observed request latency in seconds.
+        self.latency_secs = 1.0
 
-    def min_lastsync_secs(self) -> float:
-        """Return the minimum observed lastsync fetch time."""
-        return min(self.lastsync_secs)
+        # Download throughput in bytes per seconds.
+        self.rate_bps = 0.0
 
-    def mid_lastsync_secs(self) -> float:
-        """Return the median observed lastsync fetch time."""
-        return statistics.quantiles(self.lastsync_secs, n=2)[0]
+        # Optimistic estimate of the throughput in bytes per second.
+        self.rate_bps_upper = 1.0
 
-    async def fetch_lastsync(self, http: ClientSession) -> None:
-        """
-        Fetch the `lastsync` file, and record how long that took in the stats.
-        """
-        t0 = time.monotonic()
+    def refresh_stats(self) -> None:
+        if len(self.lens) < 2:
+            return
+
         try:
-            async with http.get(self.mirror.url + "lastsync") as r:
-                _timestamp = await r.text()
-                t1 = time.monotonic()
-                self.lastsync_secs.append(t1 - t0)
+            # We estimate latency and throughput with a linear regression on
+            # these (size, duration) data points.
+            rate, latency = statistics.linear_regression(self.lens, self.dt_secs)
 
-        except ClientError as exc:
-            self.errors.append(exc)
+        except statistics.StatisticsError:
+            # If we only have measurements for a single file size, then we can't
+            # fit a slope yet. In that case, for now we assume that the minimum
+            # latency we got is the best one, and we estimate the rate from that.
+            latency = min(self.dt_secs)
+            rate = self.lens[0] / latency
+
+        self.rate_bps = rate
+        self.latency_secs = latency
+
+        # We add a proportion of variance that decays with the number of
+        # measurements, so we can rank mirrors by the ones that have most
+        # potential, and collecting more data about them makes the estimate
+        # more conservative.
+        diffs = [(dx / dt) - rate for dx, dt in zip(self.lens, self.dt_secs)]
+        variance = sum(d * d for d in diffs) / (len(diffs) - 1)
+        self.rate_bps_upper = rate + math.sqrt(variance) / len(diffs)
+
+    def __str__(self):
+        m = self.mirror
+        latency_ms = self.latency_secs * 1000.0
+        rate_mbps = self.rate_bps / 1e3
+        rate_mbps_upper = self.rate_bps_upper / 1e3
+        return (
+            f"{m.country_code} delay={m.delay:>4} "
+            f"dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f} "
+            f"latency={latency_ms:.1f} mbps={rate_mbps:.2f}..{rate_mbps_upper:.2f} "
+            f"{m.hostname()}"
+        )
 
     async def _fetch_file(self, http: ClientSession, url: str) -> None:
         """
@@ -145,32 +176,28 @@ class MirrorStats(NamedTuple):
         """
         t0 = time.monotonic()
         try:
-            async with http.get(self.mirror.url + "core/os/x86_64/") as r:
+            async with http.get(url) as r:
                 data = await r.read()
+                t1 = time.monotonic()
                 r.raise_for_status()
 
-                t1 = time.monotonic()
-                rate_bps = len(data) / (t1 - t0)
-
-                # The core.db is about 120 kB in size; if it's very small, then
-                # something went wrong, and we should skip this measurement.
-                # However, if we don't put in anything, we may get zero data
-                # points. So still count it, but at only 5% speed.
-                if len(data) < 10_000:
-                    self.rate_bps.append(rate_bps * 0.05)
-                else:
-                    self.rate_bps.append(rate_bps)
+                self.lens.append(len(data))
+                self.dt_secs.append(t1 - t0)
 
         except ClientError as exc:
             self.errors.append(exc)
 
-    async def fetch_small_file(self, http: ClientSession) -> None:
-        """Fetch `core.db` (about 120 kB) and record the throughput."""
-        await self._fetch_file(http, self.mirror.url + "core/os/x86_64/core.db")
-
-    async def fetch_large_file(self, http: ClientSession) -> None:
-        """Fetch `core.files` (about 1.4 MB) and record the throughput."""
-        await self._fetch_file(http, self.mirror.url + "core/os/x86_64/core.files")
+    async def fetch_file(self, http: ClientSession, kind: str) -> None:
+        """Fetch a file and record the stats."""
+        urls = {
+            # A few bytes.
+            "small": "lastsync",
+            # About 120 kB.
+            "medium": "core/os/x86_64/core.db",
+            # About 1.4 MB.
+            "large": "core/os/x86_64/core.files",
+        }
+        await self._fetch_file(http, self.mirror.url + urls[kind])
 
 
 async def get_mirrors(http: ClientSession) -> List[Mirror]:
@@ -192,29 +219,24 @@ def filter_mirrors(mirrors: List[Mirror]) -> List[Mirror]:
     return mirrors
 
 
-async def fetch_lastsync_once(http: ClientSession, mirrors: List[MirrorStats]) -> None:
-    """
-    For a group of mirrors in parallel, measure how long it takes to "ping"
-    them, by fetching the lastsync file, once for every mirror.
-    """
-    async with asyncio.TaskGroup() as tg:
-        for m in mirrors:
-            tg.create_task(m.fetch_lastsync(http))
-
-
-async def fetch_lastsync_many(
-    http: ClientSession, mirrors: List[MirrorStats], n: int
+async def fetch_many(
+    http: ClientSession, mirrors: List[MirrorStats], kind: str, n: int
 ) -> None:
     """
-    Fetch the lastsync file `n` times per mirror, and record the durations. We
-    sleep a bit in between to not hammer the servers too much, and we shuffle
-    the list to even out the effects of request order, if there is any.
+    Fetch a file `n` times per mirror, and record the stats. We sleep a bit in
+    between to not happer the servers too much, and we shuffle the list to even
+    out the effects of request order, if there is any.
     """
     sleep_seconds = 0.1
     for _ in range(n):
         random.shuffle(mirrors)
         await asyncio.sleep(sleep_seconds)
-        await fetch_lastsync_once(http, mirrors)
+        async with asyncio.TaskGroup() as tg:
+            for m in mirrors:
+                tg.create_task(m.fetch_file(http, kind))
+
+    for m in mirrors:
+        m.refresh_stats()
 
 
 async def main() -> None:
@@ -236,30 +258,21 @@ async def main() -> None:
     )
 
     async with aiohttp.ClientSession(connector=connector, timeout=timeout) as http:
-        mirrors = [MirrorStats.new(m) for m in filter_mirrors(await get_mirrors(http))]
+        mirrors = [MirrorStats(m) for m in filter_mirrors(await get_mirrors(http))]
 
         # For each mirror, try to fetch the `lastsync` file, and measure how
-        # long that took. This measurement is not yet that interesting though,
-        # because it includes the TLS handshake, so we do this primarily to
-        # establish all connections. Then we fetch again, to get a better sense
-        # of how long it really takes.
-        sleep_secs = 0.1
+        # long that took. The initial measurement is not yet that interesting,
+        # because it includes the TLS handshake, but for subsequent ones, that's
+        # how we get the latencies.
         print("Measuring initial fetch ...")
-        await fetch_lastsync_once(http, mirrors)
-        await fetch_lastsync_many(http, mirrors, 2)
+        await fetch_many(http, mirrors, "small", 3)
 
-        # Keep the top 25 fastests mirrors, based on the fastest samples.
-        # At this point we are looking for _potential_, and not interested in
-        # outliers.
-        mirrors.sort(key=lambda m: m.min_lastsync_secs())
+        mirrors.sort(key=lambda m: m.latency_secs)
         for m in mirrors:
-            mm = m.mirror
-            print(
-                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.lastsync_secs,
-            )
+            print(m)
 
         mirrors = mirrors[:25]
+        return False
 
         # For the top candidates, refine the stats with a few more requests.
         print("Measuring more fetch times ...")
@@ -332,6 +345,7 @@ async def main() -> None:
             rate_mbps = sum(m.rate_bps) / len(m.rate_bps) / 1e6
             print(f"# {rate_mbps:.1f} MB/s")
             print(f"Server = {m.mirror.url}$repo/os/$arch")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
