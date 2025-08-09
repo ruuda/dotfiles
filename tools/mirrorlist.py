@@ -9,10 +9,11 @@
 
 from __future__ import annotations
 
+import heapq
+import math
 import random
 import statistics
 import time
-import math
 
 import asyncio
 import aiohttp  # Tested with 3.12.15
@@ -135,16 +136,31 @@ class MirrorStats:
         if len(self.lens) < 2:
             return
 
+        # The latency is the minimum duration we get, any interference we get
+        # can only make the transfer slower. We are not necessarily interested
+        # in the lowest latency, maybe the connection is terrible most of the
+        # time, but in some occasions we got lucky, but later we order by rate
+        # anyway, so this suffices.
+        latency = min(self.dt_secs)
+
         try:
-            # We estimate latency and throughput with a linear regression on
-            # these (size, duration) data points.
-            rate, latency = statistics.linear_regression(self.lens, self.dt_secs)
+            # We estimate throughput with a linear regression on these
+            # (size, duration) data points, with latency removed, and also all
+            # the small files excluded, because they make the regression
+            # basically go to zero.
+            xs = []
+            ys = []
+            for x, dt in zip(self.lens, self.dt_secs):
+                if x > 100:
+                    xs.append(x)
+                    ys.append(dt - latency)
+
+            rate = 1.0 / statistics.linear_regression(xs, ys, proportional=True).slope
 
         except statistics.StatisticsError:
-            # If we only have measurements for a single file size, then we can't
-            # fit a slope yet. In that case, for now we assume that the minimum
-            # latency we got is the best one, and we estimate the rate from that.
-            latency = min(self.dt_secs)
+            # If we can't fit a slope yet, we estimate the throughput from the
+            # latency, which usually severely underestimates sustained
+            # throughput.
             rate = self.lens[0] / latency
 
         self.rate_bps = rate
@@ -156,18 +172,20 @@ class MirrorStats:
         # more conservative.
         diffs = [(dx / dt) - rate for dx, dt in zip(self.lens, self.dt_secs)]
         variance = sum(d * d for d in diffs) / (len(diffs) - 1)
-        self.rate_bps_upper = rate + math.sqrt(variance) / len(diffs)
+        self.rate_bps_upper = (
+            rate + math.sqrt(variance) / len(diffs) + (100e6 / (len(diffs) ** 2))
+        )
 
     def __str__(self):
         m = self.mirror
         latency_ms = self.latency_secs * 1000.0
-        rate_mbps = self.rate_bps / 1e3
-        rate_mbps_upper = self.rate_bps_upper / 1e3
+        rate_kbps = self.rate_bps / 1e3
+        rate_kbps_upper = self.rate_bps_upper / 1e3
         return (
             f"{m.country_code} delay={m.delay:>4} "
             f"dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f} "
-            f"latency={latency_ms:.1f} mbps={rate_mbps:.2f}..{rate_mbps_upper:.2f} "
-            f"{m.hostname()}"
+            f"latency={latency_ms:.1f} kbps={rate_kbps:.2f}..{rate_kbps_upper:.2f} "
+            f"n={len(self.dt_secs)} {m.hostname()}"
         )
 
     async def _fetch_file(self, http: ClientSession, url: str) -> None:
@@ -267,11 +285,37 @@ async def main() -> None:
         print("Measuring initial fetch ...")
         await fetch_many(http, mirrors, "small", 3)
 
-        mirrors.sort(key=lambda m: m.latency_secs)
+        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
         for m in mirrors:
             print(m)
 
-        mirrors = mirrors[:25]
+        # We discard the slowest mirrors, and collect more data from the most
+        # promising ones.
+        print("Round 2: ")
+        mirrors = mirrors[:30]
+        await fetch_many(http, mirrors, "small", 3)
+
+        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
+        for m in mirrors:
+            print(m)
+
+        queue = [(-m.rate_bps_upper, m) for m in mirrors[:20]]
+        heapq.heapify(queue)
+
+        for round in range(20):
+            print(f"Round {round}")
+            candidates = []
+            for k in range(5):
+                _prio, m = heapq.heappop(queue)
+                candidates.append(m)
+
+            for m in candidates:
+                kind = "medium" if len(m.dt_secs) <= 12 else "large"
+                await m.fetch_file(http, kind)
+                m.refresh_stats()
+                heapq.heappush(queue, (-m.rate_bps_upper, m))
+                print(m)
+
         return False
 
         # For the top candidates, refine the stats with a few more requests.
