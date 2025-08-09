@@ -1,12 +1,6 @@
 {
   // Turn off AI stuff that I don't need.
-  "features": {
-    "copilot": false
-  },
-  "assistant": {
-    "version": "2",
-    "enabled": false
-  },
+  "disable_ai": true,
 
   "theme": "Gruvbox Dark",
   "vim_mode": true,
@@ -14,7 +8,7 @@
   "wrap_guides": [80, 100],
   "preferred_line_length": 80,
 
-  "ui_font_size": 14,
+  "ui_font_size": 16,
   "ui_font_family": "Cantarell",
   "buffer_font_size": 14,
   "buffer_font_family": "Intel One Mono",
