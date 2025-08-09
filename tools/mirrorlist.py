@@ -155,21 +155,17 @@ class MirrorStats:
         # wildly misleading compared to when we do have those, that we need
         # to add a bonus to put them in the same scale, to make the priority
         # queue sorting work.
-        bonus = 500.0e6 / math.sqrt(sum(self.lens))
+        bonus = 800.0e6 / (sum(self.lens) ** 0.25)
 
         # TODO: Should we decay it with the number of data points once more?
         self.rate_bps_upper = (
-            self.rate_bps + 25.0 * math.sqrt(variance) / len(diffs) + bonus
+            self.rate_bps + (50.0 * math.sqrt(variance) / (len(diffs) ** 1.5)) + bonus
         )
 
     def __str__(self):
-        m = self.mirror
         rate_mbps = self.rate_bps / 1e6
         rate_mbps_upper = self.rate_bps_upper / 1e6
-        return (
-            f"{m.country_code} mbps={rate_mbps:5.2f}..{rate_mbps_upper:5.2f} "
-            f"n={len(self.dt_secs):>2} {m.hostname()}"
-        )
+        return f"mbps={rate_mbps:5.2f}..{rate_mbps_upper:5.2f}"
 
     async def _fetch_file(self, http: ClientSession, url: str) -> None:
         """
@@ -265,48 +261,68 @@ async def main() -> None:
 
         # For each mirror, try to fetch the `lastsync` file, and measure how
         # long that took. The initial measurement is not yet that interesting,
-        # because it includes the TLS handshake, but for subsequent ones, that's
-        # how we get the latencies.
-        print("Measuring initial fetch ...")
-        await fetch_many(http, mirrors, "small", 3)
-
-        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
-        for m in mirrors:
-            print(m)
-
-        # We discard the slowest mirrors, and collect more data from the most
-        # promising ones.
-        print("Round 2: ")
-        mirrors = mirrors[:30]
+        # because it includes the TLS handshake, but for subsequent ones,
+        # that's how we get the latencies.
+        print("Establishing connections ...")
         await fetch_many(http, mirrors, "small", 2)
 
-        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
-        for m in mirrors:
-            print(m)
+        # We also fetch the medium-size file. Even if we do it for all servers
+        # in parallel, empirically I found that we don't saturate the link, and
+        # the results are still representatitive.
+        print("Measuring initial small file fetch ...")
+        await fetch_many(http, mirrors, "medium", 1)
 
-        queue = [(-m.rate_bps_upper, m) for m in mirrors[:20]]
+        # We keep the 30 fastest mirrors and add one more data point there.
+        # Even if due to fluctuations we kick out a bad one, there has to be
+        # a decent one among those 30.
+        print("Preparing top mirrors ...")
+        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
+        mirrors = mirrors[:30]
+        await fetch_many(http, mirrors, "medium", 1)
+
+        # Now we take the top 15 most promising ones, and those we investigate
+        # more closely.
+        mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
+        mirrors = mirrors[:15]
+
+        # For each one, we download the large file at least once, to get a basic
+        # sense of how fast the mirror is, because from just the medium file we
+        # don't get a good impression.
+        print("Probing large files individually ...")
+        for m in mirrors:
+            await m.fetch_file(http, "large")
+            m.refresh_stats()
+
+        queue = [(-m.rate_bps_upper, m) for m in mirrors]
         heapq.heapify(queue)
 
-        kind_rounds = {
-            "medium": 15,
-            "large": 10,
-            "huge": 5,
-        }
+        kind_rounds_topk = [
+            ("large", 10, 5),
+            ("huge", 5, 10),
+        ]
 
-        for kind, rounds in kind_rounds.items():
+        for kind, rounds, topk in kind_rounds_topk:
             for round in range(rounds):
                 print(f"Round {kind}:{round}")
                 candidates = []
-                for k in range(5):
+                for k in range(topk):
                     _prio, m = heapq.heappop(queue)
                     candidates.append(m)
 
                 for m in candidates:
-                    print(m)
+                    m_before = str(m)
                     await m.fetch_file(http, kind)
                     m.refresh_stats()
                     heapq.heappush(queue, (-m.rate_bps_upper, m))
-                    print(m)
+                    m_after = str(m)
+                    print(
+                        m.mirror.country_code,
+                        m_before,
+                        "->",
+                        m_after,
+                        f"n={len(m.dt_secs):>2}",
+                        m.mirror.hostname(),
+                    )
 
         with open("mirrors.tsv", "w", encoding="utf-8") as f:
             f.write("host\tlen\tdt_secs\n")
@@ -314,79 +330,17 @@ async def main() -> None:
                 for dx, dt in zip(m.lens, m.dt_secs):
                     f.write(f"{m.mirror.hostname()}\t{dx}\t{dt:.5f}\n")
 
-        return False
-
-        # For the top candidates, refine the stats with a few more requests.
-        print("Measuring more fetch times ...")
-        await fetch_lastsync_many(http, mirrors, 5)
-
-        mirrors.sort(key=lambda m: m.mid_lastsync_secs())
-        for m in mirrors:
-            mm = m.mirror
-            print(
-                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.lastsync_secs,
-            )
-
-        # And for the top 15 we add a few more data points, to be sure.
-        mirrors = mirrors[:15]
-        print("Measuring small file fetch times ...")
-
-        # Now we start fetching the core.db files. This we do sequentially,
-        # because now we are measuring throughput, and if we run too much in
-        # parallel, we saturate our connection.
-        for _ in range(2):
-            for m in mirrors:
-                await m.fetch_small_file(http)
-
-        mirrors.sort(key=lambda m: max(m.rate_bps), reverse=True)
-        for m in mirrors:
-            mm = m.mirror
-            print(
-                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.rate_bps,
-            )
-
-        # Throw away the slowest 5, and do a few more passes. Only at this point,
-        # the congestion control limits start to widen, and the later fetches are
-        # generally faster than the initial ones.
-        print("Measuring large file fetch times ...")
-        mirrors = mirrors[:10]
-        for _ in range(3):
-            for m in mirrors:
-                await m.fetch_large_file(http)
-
-        mirrors.sort(key=lambda m: sum(m.rate_bps), reverse=True)
-        for m in mirrors:
-            mm = m.mirror
-            print(
-                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.rate_bps,
-            )
-
-        print("Measuring large file fetch times, final ...")
-        mirrors = mirrors[:5]
-        for _ in range(3):
-            for m in mirrors:
-                await m.fetch_large_file(http)
-
-        mirrors.sort(key=lambda m: sum(m.rate_bps), reverse=True)
-        for m in mirrors:
-            mm = m.mirror
-            print(
-                f"{mm.country_code} delay={mm.delay} dt={mm.duration_avg:.3f} sd={mm.duration_stddev:.3f} {mm.hostname()}",
-                m.rate_bps,
-            )
-
-        # TODO: Could do a priority queue ordered on the upper bound of a
-        # confidence interval for the throughput. Then explore/exploit would
-        # test the right hosts in order.
+        mirrors = sorted((m for _, m in queue), key=lambda m: m.rate_bps, reverse=True)
 
         print()
-        for m in mirrors:
-            rate_mbps = sum(m.rate_bps) / len(m.rate_bps) / 1e6
-            print(f"# {rate_mbps:.1f} MB/s")
-            print(f"Server = {m.mirror.url}$repo/os/$arch")
+        for m in mirrors[:10]:
+            rate_mbps = m.rate_bps / 1e6
+            data_mb = sum(m.lens) / 1e6
+            print(
+                f"# {rate_mbps:>4.1f} MB/s, size={data_mb:>4.1f} MB, "
+                f"n={len(m.dt_secs)}, {m.mirror.country_code}\n"
+                f"Server = {m.mirror.url}$repo/os/$arch"
+            )
 
 
 if __name__ == "__main__":
