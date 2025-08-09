@@ -123,9 +123,6 @@ class MirrorStats:
         # Errors observed while measuring.
         self.errors: List[ClientError] = []
 
-        # Observed request latency in seconds.
-        self.latency_secs = 1.0
-
         # Download throughput in bytes per seconds.
         self.rate_bps = 0.0
 
@@ -133,59 +130,45 @@ class MirrorStats:
         self.rate_bps_upper = 1.0
 
     def refresh_stats(self) -> None:
-        if len(self.lens) < 2:
+        if len(self.dt_secs) < 2:
             return
 
-        # The latency is the minimum duration we get, any interference we get
-        # can only make the transfer slower. We are not necessarily interested
-        # in the lowest latency, maybe the connection is terrible most of the
-        # time, but in some occasions we got lucky, but later we order by rate
-        # anyway, so this suffices.
-        latency = min(self.dt_secs)
+        # Compute the average transfer rate, weighted by file size (because we
+        # are interested in sustained transfer rate more than latency), over the
+        # fastest half of the transfers. This ensures that the tiny files we
+        # download at the start do not drag down the average as much.
+        datas = sorted((dx / dt, dx, dt) for dx, dt in zip(self.lens, self.dt_secs))
+        datas = datas[len(datas) // 2 :]
+        self.rate_bps = sum(p[1] for p in datas) / sum(p[2] for p in datas)
 
-        try:
-            # We estimate throughput with a linear regression on these
-            # (size, duration) data points, with latency removed, and also all
-            # the small files excluded, because they make the regression
-            # basically go to zero.
-            xs = []
-            ys = []
-            for x, dt in zip(self.lens, self.dt_secs):
-                if x > 1_000:
-                    xs.append(x)
-                    ys.append(dt - latency)
+        diffs = [(dx / dt) - self.rate_bps for dx, dt in zip(self.lens, self.dt_secs)]
 
-            rate = 1.0 / statistics.linear_regression(xs, ys, proportional=True).slope
-
-        except statistics.StatisticsError:
-            # If we can't fit a slope yet, we estimate the throughput from the
-            # latency, which usually severely underestimates sustained
-            # throughput.
-            rate = self.lens[0] / latency
-
-        self.rate_bps = rate
-        self.latency_secs = latency
-
-        # We add a proportion of variance that decays with the number of
-        # measurements, so we can rank mirrors by the ones that have most
-        # potential, and collecting more data about them makes the estimate
-        # more conservative.
-        diffs = [(dx / dt) - rate for dx, dt in zip(self.lens, self.dt_secs)]
+        # For the upper bound, we compute the deviation of every sample from
+        # the average rate, as an estimate of the variance. This is wildly
+        # inaccurate, especially for the tiny files that have a much lower
+        # throughput, but that is the point of it: we want wide error bars
+        # with little data, and shrink them over time.
+        diffs = [(dx / dt) - self.rate_bps for dx, dt in zip(self.lens, self.dt_secs)]
         variance = sum(d * d for d in diffs) / (len(diffs) - 1)
+
+        # Before we download anything of serious size, the estimates are so
+        # wildly misleading compared to when we do have those, that we need
+        # to add a bonus to put them in the same scale, to make the priority
+        # queue sorting work.
+        bonus = 500.0e6 / math.sqrt(sum(self.lens))
+
+        # TODO: Should we decay it with the number of data points once more?
         self.rate_bps_upper = (
-            rate + math.sqrt(variance) / len(diffs) + (100e6 / len(diffs))
+            self.rate_bps + 25.0 * math.sqrt(variance) / len(diffs) + bonus
         )
 
     def __str__(self):
         m = self.mirror
-        latency_ms = self.latency_secs * 1000.0
         rate_mbps = self.rate_bps / 1e6
         rate_mbps_upper = self.rate_bps_upper / 1e6
         return (
-            f"{m.country_code} delay={m.delay:>4} "
-            f"dt={m.duration_avg:.3f} sd={m.duration_stddev:.3f} "
-            f"latency={latency_ms:.1f} mbps={rate_mbps:.2f}..{rate_mbps_upper:.2f} "
-            f"n={len(self.dt_secs)} {m.hostname()}"
+            f"{m.country_code} mbps={rate_mbps:5.2f}..{rate_mbps_upper:5.2f} "
+            f"n={len(self.dt_secs):>2} {m.hostname()}"
         )
 
     async def _fetch_file(self, http: ClientSession, url: str) -> None:
@@ -214,6 +197,8 @@ class MirrorStats:
             "medium": "core/os/x86_64/core.db",
             # About 1.4 MB.
             "large": "core/os/x86_64/core.files",
+            # About 8.2 MB.
+            "huge": "extra/os/x86_64/extra.db",
         }
         await self._fetch_file(http, self.mirror.url + urls[kind])
 
@@ -293,7 +278,7 @@ async def main() -> None:
         # promising ones.
         print("Round 2: ")
         mirrors = mirrors[:30]
-        await fetch_many(http, mirrors, "small", 3)
+        await fetch_many(http, mirrors, "small", 2)
 
         mirrors.sort(key=lambda m: m.rate_bps_upper, reverse=True)
         for m in mirrors:
@@ -302,15 +287,22 @@ async def main() -> None:
         queue = [(-m.rate_bps_upper, m) for m in mirrors[:20]]
         heapq.heapify(queue)
 
-        for kind in ["medium", "large"]:
-            for round in range(10):
-                print(f"Round {round}")
+        kind_rounds = {
+            "medium": 15,
+            "large": 10,
+            "huge": 5,
+        }
+
+        for kind, rounds in kind_rounds.items():
+            for round in range(rounds):
+                print(f"Round {kind}:{round}")
                 candidates = []
                 for k in range(5):
                     _prio, m = heapq.heappop(queue)
                     candidates.append(m)
 
                 for m in candidates:
+                    print(m)
                     await m.fetch_file(http, kind)
                     m.refresh_stats()
                     heapq.heappush(queue, (-m.rate_bps_upper, m))
