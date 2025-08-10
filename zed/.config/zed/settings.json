@@ -19,6 +19,10 @@
   "remove_trailing_whitespace_on_save": true,
   "soft_wrap": "none",
 
+  "tabs": {
+    "git_status": true,
+  },
+
   "git": {
     "inline_blame": {
       "enabled": false

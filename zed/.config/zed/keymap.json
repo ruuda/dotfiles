@@ -1,0 +1,16 @@
+[
+  {
+    "context": "Workspace",
+    "bindings": { }
+  },
+  {
+    "context": "Editor && (vim_mode == normal || vim_mode == helix_normal)",
+    "bindings": {
+      // These bindings make things consistent with my Vim and Helix configs.
+      "\\ w": "workspace::Save",
+      "\\ x": ["workspace::SendKeystrokes", ": x"],
+      "\\ f": "file_finder::Toggle",
+      "\\ r": "editor::Rewrap"
+    }
+  }
+]
