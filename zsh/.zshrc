@@ -167,20 +167,20 @@ function fsh {
   gcroot="${HOME}/.cache/nix/gcroots/${devenv_id}"
 
   # Build the devShell itself, record its store path.
-  shell_storepath=$(nix216 build --keep-env-derivations --no-link --print-out-paths .#devShells.x86_64-linux.default)
+  shell_storepath=$(nix228 build --keep-env-derivations --no-link --print-out-paths .#devShells.x86_64-linux.default)
 
   # Adding a GC root for just the shell is insufficient, because Nix needs the
   # flake inputs to determine the store path of the shell. `flake archive` can
   # give us the store paths for the flake inputs, then we pass all of those to
   # nix-store --add-root along the the shell itself.
-  nix216 --offline flake archive --dry-run --json \
+  nix228 --offline flake archive --dry-run --json \
     | jq --raw-output '.inputs | .. | .path? | select(. != null)' \
     | xargs --max-procs=1 \
     nix-store --add-root ${gcroot} --indirect --realise ${shell_storepath} \
     > /dev/null
 
   # Finally, enter the development shell itself.
-  nix216 --offline develop --command $SHELL
+  nix228 --offline develop --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
