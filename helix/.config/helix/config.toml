@@ -4,6 +4,30 @@ theme = "nightfox"
 auto-save = true
 rulers = [81, 101]
 text-width = 80
+bufferline = "multiple"
+completion-timeout = 5
+trim-trailing-whitespace = true
+
+[editor.indent-guides]
+render = true
+skip-levels = 0
+
+[editor.auto-pairs]
+# Auto-close these pairs only, and no others, especially not strings.
+"(" = ")"
+"[" = "]"
+"{" = "}"
+
+[editor.statusline]
+right = [
+  "diagnostics",
+  "version-control",
+  "spacer",
+  "primary-selection-length",
+  "register",
+  "position",
+  "file-encoding",
+]
 
 [editor.file-picker]
 # Do not ignore hidden files.
@@ -22,6 +46,20 @@ f = "file_picker"
 # type than, and `r` makes more sense anyway, so I'm going for `\r`, and I'll
 # map the same in Vim.
 r = ":reflow"
+
+[keys.normal.g]
+# With the bufferline enabled, Helix looks like it has tabs. We can cycle
+# through buffers with gn and gp, but my Vim muscle memory uses gt and gT,
+# so bind those too.
+t = "goto_next_buffer"
+T = "goto_previous_buffer"
+
+[keys.normal]
+# Enable shrinking a selection with Shift+X, the inverse of just x.
+X = "select_line_above"
+
+[keys.select]
+X = "select_line_above"
 
 [keys.insert]
 # Make Ctrl+N trigger completion, like it does in Vim. But then when completion
