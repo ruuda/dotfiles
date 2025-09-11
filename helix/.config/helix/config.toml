@@ -47,6 +47,9 @@ f = "file_picker"
 # map the same in Vim.
 r = ":reflow"
 
+# Shorthand for sorting the selected lines.
+s = ["split_selection_on_newline", ":sort"]
+
 [keys.normal.g]
 # With the bufferline enabled, Helix looks like it has tabs. We can cycle
 # through buffers with gn and gp, but my Vim muscle memory uses gt and gT,
