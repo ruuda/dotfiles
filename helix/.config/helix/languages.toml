@@ -13,8 +13,7 @@ scope = "source.rcl"
 
 [[grammar]]
 name = "rcl"
-#source = { git = "/home/ruud/repos/rcl", rev = "tree-sitter", subpath = "grammar/tree-sitter-rcl" }
-source = { path = "/home/ruud/repos/rcl/grammar/tree-sitter-rcl" }
+source = { git = "https://github.com/rcl-lang/tree-sitter-rcl.git", rev = "master" }
 
 [[language]]
 name = "ledger"
