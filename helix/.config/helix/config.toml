@@ -14,9 +14,12 @@ skip-levels = 0
 
 [editor.auto-pairs]
 # Auto-close these pairs only, and no others, especially not strings.
-"(" = ")"
 "[" = "]"
-"{" = "}"
+
+# Actually, disable auto-close. It's annoying when you type an ( somewhere
+# because you need to replace something, to delete the auto-inserted one again.
+# "{" = "}"
+# "(" = ")"
 
 [editor.statusline]
 right = [
