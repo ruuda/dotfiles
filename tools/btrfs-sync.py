@@ -67,12 +67,21 @@ def sync_one(src_path: str, dst_path: str) -> bool:
 
     cmd_send.append(target)
     cmd_recv = ["btrfs", "receive", dst_path]
+    cmd_pv = [
+        "pv",
+        "--bytes",
+        "--rate",
+        "--average-rate",
+        "--average-rate-window=60",
+        "--progress",
+        "--gauge",
+    ]
 
     print(f":: Send: {' '.join(cmd_send)}")
     print(f":: Recv: {' '.join(cmd_recv)}")
 
     p1 = Popen(cmd_send, cwd=src_path, stdout=subprocess.PIPE)
-    p2 = Popen(["pv"], stdin=p1.stdout, stdout=subprocess.PIPE)
+    p2 = Popen(cmd_pv, stdin=p1.stdout, stdout=subprocess.PIPE)
     p3 = Popen(cmd_recv, cwd=dst_path, stdin=p2.stdout)
     assert p1.stdout is not None
     assert p2.stdout is not None
