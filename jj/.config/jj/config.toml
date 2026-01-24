@@ -1,0 +1,6 @@
+[user]
+name = "Ruud van Asseldonk"
+email = "dev@veniogames.com"
+
+[colors]
+"diff token" = { underline = false }
