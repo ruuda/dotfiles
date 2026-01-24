@@ -1,13 +1,13 @@
 use-grammars = { except = ["gemini"] }
 
 [[language]]
+name = "rcl"
 auto-format = false
 comment-tokens = ["//"]
 file-types = ["rcl"]
 formatter = { command = "rcl", args = ["format", "-"] }
 grammar = "rcl"
 indent = { tab-width = 2, unit = "  " }
-name = "rcl"
 roots = ["build.rcl"]
 scope = "source.rcl"
 
@@ -22,3 +22,9 @@ file-types = [{ glob = "finance/*.dat" }]
 indent = { tab-width = 2, unit = "  " }
 text-width = 64
 rulers = [65]
+
+[[language]]
+name = "rust"
+auto-pairs = false
+auto-format = false
+formatter = { command = "rustfmt", args = ["--emit", "stdout"] }
