@@ -3,4 +3,12 @@ name = "Ruud van Asseldonk"
 email = "dev@veniogames.com"
 
 [colors]
+# Tone down the defaults a bit, I don't want a christmas tree in my terminal.
 "diff token" = { underline = false }
+"author" = "default"
+"committer" = "default"
+"timestamp" = "default"
+"commit_id" = "default"
+"change_id" = "default"
+"working_copy" = { bold = false }
+"prefix" = { bold = false, fg = "yellow" }
