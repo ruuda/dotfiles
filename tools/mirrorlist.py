@@ -223,7 +223,7 @@ async def fetch_many(
 ) -> None:
     """
     Fetch a file `n` times per mirror, and record the stats. We sleep a bit in
-    between to not happer the servers too much, and we shuffle the list to even
+    between to not hammer the servers too much, and we shuffle the list to even
     out the effects of request order, if there is any.
     """
     sleep_seconds = 0.1
