@@ -239,6 +239,8 @@ async def fetch_many(
 
 
 async def main() -> None:
+    started_at = datetime.now(timezone.utc)
+
     timeout = aiohttp.ClientTimeout(
         # Timeouts are in seconds.
         sock_connect=3.0,
@@ -325,10 +327,11 @@ async def main() -> None:
                     )
 
         with open("mirrors.tsv", "w", encoding="utf-8") as f:
-            f.write("host\tlen\tdt_secs\n")
+            observed_at = started_at.isoformat()
+            f.write("host\tlen\tdt_secs\tobserved_at\n")
             for _, m in queue:
                 for dx, dt in zip(m.lens, m.dt_secs):
-                    f.write(f"{m.mirror.hostname()}\t{dx}\t{dt:.5f}\n")
+                    f.write(f"{m.mirror.hostname()}\t{dx}\t{dt:.5f}\t{observed_at}\n")
 
         mirrors = sorted((m for _, m in queue), key=lambda m: m.rate_bps, reverse=True)
 
