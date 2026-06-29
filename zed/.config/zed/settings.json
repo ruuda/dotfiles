@@ -1,10 +1,29 @@
 {
   // Turn off AI stuff that I don't need.
+  "cli_default_open_behavior": "existing_window",
+  "tab_size": 2,
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "dock": "left"
+  },
   "disable_ai": true,
 
   "theme": "One Dark",
   "vim_mode": true,
-  "helix_mode": true,
+  "helix_mode": false,
 
   "wrap_guides": [80, 100],
   "preferred_line_length": 80,
@@ -36,6 +55,15 @@
   },
 
   "languages": {
+    "HTML": {
+      "jsx_tag_auto_close": {
+        "enabled": false
+      },
+      "use_autoclose": false
+    },
+    "Rust": {
+      "tab_size": 4
+    },
     "Python": {
       // Disable stuff that runs untrusted javascript outside of a browser, and
       // creates weird .ropeproject directories that I never consented to.
