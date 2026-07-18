@@ -108,9 +108,10 @@ alias nix217="/nix/store/3wqasl97rjiza3vd7fxjnvli2w9l30mk-nix-2.17.0/bin/nix ${n
 alias nix220="/nix/store/iwgkck1d64s5f26ngln540hpf06g28py-nix-2.20.1/bin/nix ${nix_flags}"
 alias nix224="/nix/store/gg18k13zmpk3pqqp3j4d4klsgxlpvgbg-nix-2.24.5/bin/nix ${nix_flags}"
 alias nix228="/nix/store/clfkfybsfi0ihp7hjkz4dkgphj7yy0l4-nix-2.28.3/bin/nix ${nix_flags}"
+alias nix235="/nix/store/q6yfdws28aj556jlz5yayaggiddmb0b5-nix-2.35.1/bin/nix ${nix_flags}"
 
 # And default to a recent Nix from now on.
-alias nix='nix228'
+alias nix='nix235'
 
 # Colour ls and grep output by default. Also prevent ls from quoting names with
 # spaces. Furthermore, list directories before files.
@@ -167,13 +168,13 @@ function fsh {
   gcroot="${HOME}/.cache/nix/gcroots/${devenv_id}"
 
   # Build the devShell itself, record its store path.
-  shell_storepath=$(nix228 build --keep-env-derivations --no-link --print-out-paths .#devShells.x86_64-linux.default)
+  shell_storepath=$(nix235 build --keep-env-derivations --no-link --print-out-paths .#devShells.x86_64-linux.default)
 
   # Adding a GC root for just the shell is insufficient, because Nix needs the
   # flake inputs to determine the store path of the shell. `flake archive` can
   # give us the store paths for the flake inputs, then we pass all of those to
   # nix-store --add-root along the the shell itself.
-  nix228 --offline flake archive --dry-run --json \
+  nix235 --offline flake archive --dry-run --json \
     | rcl rq '{input}
         .transitive_closure(p => p.inputs.values())
         .map_dedup(p => p.path)
@@ -184,7 +185,7 @@ function fsh {
     > /dev/null
 
   # Finally, enter the development shell itself.
-  nix228 --offline develop --command $SHELL
+  nix235 --offline develop --command $SHELL
 }
 
 # The Gnome keyring does not support ed25519 keys, and it is annoying to have to
