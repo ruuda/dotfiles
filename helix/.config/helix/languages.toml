@@ -51,8 +51,13 @@ only = [
   "zig",
 ]
 
+[language-server.rcl]
+command = "rcl"
+args = ["lsp"]
+
 [[language]]
 name = "rcl"
+language-servers = ["rcl"]
 auto-format = false
 comment-tokens = ["//"]
 file-types = ["rcl"]
