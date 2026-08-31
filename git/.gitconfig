@@ -49,11 +49,13 @@ fzf \
   # Optionally takes the branch name.
   whatsnew = !git hist --no-merges --reverse $1@{1}..$1@{0}
 
-  # Delete all branches that have been merged into master.
-  gc-branches = !git branch --merged master | grep -v master | xargs git branch -d
+  # Delete all branches that have been merged into master/main.
+  gc-master = !git branch --merged master | grep -v master | xargs git branch -d
+  gc-main   = !git branch --merged main | grep -v main | xargs git branch -d
 
-  # Set upstream to master.
+  # Set upstream to master/main.
   upmaster = branch --set-upstream-to=master
+  upmain   = branch --set-upstream-to=main
 
   # Force-push with lease.
   pushf = push --force-with-lease
