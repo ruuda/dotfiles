@@ -238,6 +238,17 @@ async def fetch_many(
         m.refresh_stats()
 
 
+def append_database(started_at: datetime, mirrors: List[MirrorStats]) -> None:
+    assert started_at.tzinfo is not None, "Need an unambiguous instant."
+
+    with open("mirrors.tsv", "w", encoding="utf-8") as f:
+        observed_at = started_at.isoformat()
+        f.write("host\tlen\tdt_secs\tobserved_at\n")
+        for m in mirrors:
+            for dx, dt in zip(m.lens, m.dt_secs):
+                f.write(f"{m.mirror.hostname()}\t{dx}\t{dt:.5f}\t{observed_at}\n")
+
+
 async def main() -> None:
     started_at = datetime.now(timezone.utc)
 
