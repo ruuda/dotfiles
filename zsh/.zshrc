@@ -262,6 +262,13 @@ if [[ -v NIX_GCROOT ]]; then
 fi
 nix_info_msg="%{$fg[blue]%}${nix_paths}%{$reset_color%}"
 
+# If we are on an SSH session, color the host differently to clarify that.
+if [[ -z "${SSH_CONNECTION}" ]]; then
+  host_color="$fg[green]";
+else
+  host_color="$fg[cyan]";
+fi
+
 # Retrieve source control status before printing the prompt.
 precmd() { vcs_info }
 
@@ -280,9 +287,9 @@ zstyle ':vcs_info:*' stagedstr "%{$fg[green]%}+"
 # changes, we need to do it on every prompt.
 setopt prompt_subst
 
-# Start with a newline, then user@host in green, then three components of the
-# working directory, then source control (vcs) info, then a dollar in white.
+# Start with a newline, then user@host in host color, then three components of
+# the working directory, then source control (vcs) info, then a dollar in white.
 # (There is no different charater for a root prompt, as root does not use this
 # .zshrc anyway.)
 PS1='
-%{$fg[green]%}%n@%m%{$reset_color%} %3~ ${nix_info_msg}${vcs_info_msg_0_}%{$fg[white]%}$%{$reset_color%} '
+%{$host_color%}%n@%m%{$reset_color%} %3~ ${nix_info_msg}${vcs_info_msg_0_}%{$fg[white]%}$%{$reset_color%} '
