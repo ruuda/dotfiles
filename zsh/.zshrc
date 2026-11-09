@@ -210,13 +210,18 @@ function start_ssh_agent {
 # variables. If it turns out that the agent is no longer running, start a new
 # agent. This will update the environment file. If there was no environment
 # file, also start a new agent (and write the environment file).
-if [ -f "${SSH_ENV}" ]; then
-  . "${SSH_ENV}" > /dev/null
-  ps ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-    start_ssh_agent;
-  }
+if [ -e "${SSH_AUTH_SOCK}" ]; then
+  # There is already a socket, possibly because we are on an SSH session with
+  # agent forwarding enabled. No need to start our own agent then.
 else
-  start_ssh_agent;
+  if [ -f "${SSH_ENV}" ]; then
+    . "${SSH_ENV}" > /dev/null
+    ps ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+      start_ssh_agent;
+    }
+  else
+    start_ssh_agent;
+  fi
 fi
 
 # Set suffix aliases to open certain files with an editor by default.
